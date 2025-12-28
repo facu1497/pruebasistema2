@@ -24,6 +24,17 @@ body{
     radial-gradient(900px 500px at 100% 10%, rgba(34,197,94,.08), transparent 60%),
     var(--bg);
   color: var(--text);
+  position: relative;
+  min-height: 100vh;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.26));
+  pointer-events:none;
+  z-index:-1;
 }
 
 header{
@@ -208,6 +219,7 @@ main.content{
   margin-left: var(--sideW);
   padding: 18px 18px 28px;
   transition: margin-left 0.25s ease;
+  min-height: calc(100vh - var(--topbarH));
 }
 main.content.collapsed{
   margin-left: 0;
@@ -217,4 +229,5 @@ main.content.collapsed{
   main.content{
     margin-left: 0;
   }
+
 }
