@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>INFORME</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body{ margin:0; background:#e6e6e6; font-family:Calibri, Arial, sans-serif; }
+  .toolbar{
+    position:sticky; top:0; z-index:10;
+    background:#f2f2f2; border-bottom:1px solid #bbb;
+    padding:8px 12px; display:flex; gap:8px; justify-content:flex-end;
+  }
+  .btn{ border:1px solid #333; background:#fff; padding:6px 10px; font-size:12px; cursor:pointer; }
+  .btn.primary{ background:#eaeaea; }
+  .btn.danger{ border-color:#a00; color:#a00; }
+
+  .page{
+    width:210mm; min-height:297mm; background:#fff;
+    margin:14px auto; padding:16mm;
+    box-shadow:0 8px 30px rgba(0,0,0,.25);
+  }
+
+  table{ width:100%; border-collapse:collapse; font-size:12px; }
+  th, td{ border:1px solid #000; padding:5px 6px; vertical-align:top; }
+  th{ font-weight:700; }
+
+  .noBorder td{ border:none; padding:0; }
+  .section{ font-weight:700; margin:5mm 0 2mm; }
+  .box{ border:1px solid #000; padding:6px; }
+
+  input, textarea{
+    width:100%; border:none; outline:none; background:transparent;
+    font-family:inherit; font-size:12px; padding:0;
+  }
+  textarea{ min-height:60px; resize:vertical; }
+
+  .bigline{ font-weight:700; margin:5mm 0 2mm; white-space:pre; }
+
+  @media print{
+    body{ background:#fff; }
+    .toolbar{ display:none; }
+    .page{ margin:0; box-shadow:none; padding:12mm; }
+    textarea{ resize:none; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="toolbar">
+  <button class="btn" id="btnVolver">Volver</button>
+  <button class="btn primary" id="btnGuardar">Guardar borrador</button>
+  <button class="btn primary" id="btnPrint">Imprimir / PDF</button>
+  <button class="btn danger" id="btnBorrar">Borrar borrador</button>
+</div>
+
+<div class="page">
+
+<!-- ENCABEZADO -->
+<table class="noBorder">
+  <tr>
+    <td>
+      <b>H.M.Gibert</b><br>
+      Fundado en 1955<br>
+      CONTADOR PUBLICO NACIONAL<br>
+      ESTUDIO DE LIQUIDACIÓN DE SINIESTROS
+    </td>
+    <td style="text-align:right;font-weight:700;" id="vCMNIA">*CMNIA*</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>SINIESTRO</th><th>POLIZA</th><th>ANALISTA</th>
+  </tr>
+  <tr>
+    <td id="vSINIESTRO"></td>
+    <td id="vPOLIZA"></td>
+    <td id="vANALISTA"></td>
+  </tr>
+</table>
+
+<div class="section">Datos personales del asegurado</div>
+<table>
+  <tr><th>APELLIDO Y NOMBRE</th><th>DNI</th></tr>
+  <tr><td id="vNOMBRE"></td><td id="vDNI"></td></tr>
+</table>
+
+<div class="section">Ubicación del riesgo afectado</div>
+<table>
+  <tr>
+    <th>CALLE</th><th>N°</th><th>PISO</th><th>LOCALIDAD</th><th>PROVINCIA</th>
+  </tr>
+  <tr>
+    <td id="vCALLE"></td>
+    <td id="vNRO"></td>
+    <td id="vPISO"></td>
+    <td id="vLOCALIDAD"></td>
+    <td id="vPROVINCIA"></td>
+  </tr>
+</table>
+
+<div class="section">Datos del siniestro</div>
+<table>
+  <tr><th>FECHA SINIESTRO</th><th>FECHA DENUNCIA</th><th>FECHA CIERRE</th></tr>
+  <tr>
+    <td><input id="inFechaSiniestro"></td>
+    <td><input id="inFechaDenuncia"></td>
+    <td><input id="inFechaCierre"></td>
+  </tr>
+</table>
+
+<div class="section">DENUNCIADO COMO OCURRIDO</div>
+<div class="box"><textarea id="txOcurrencia"></textarea></div>
+
+<div class="section">COBERTURAS AFECTADAS</div>
+<table>
+  <tr>
+    <th>COBERTURA</th>
+    <th>SUMA ASEGURADA</th>
+    <th>DAÑOS CONVALIDADOS</th>
+    <th>MONTO INDEMNIZADO</th>
+  </tr>
+  <tbody id="tbCoberturas"></tbody>
+  <tfoot>
+    <tr>
+      <td><b>TOTAL</b></td>
+      <td id="vSUMAASEG"></td>
+      <td id="vDANOSCONV"></td>
+      <td id="vINDEM"></td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- ✅ DETALLE DE LA LIQUIDACION ABAJO -->
+<div class="section">DETALLE DE LA LIQUIDACION</div>
+<table>
+  <tr>
+    <th>DETALLE</th>
+    <th>MONTO CONVALIDADO</th>
+    <th>MONTO INDEMNIZADO</th>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td id="vTOTAL_LIQ"></td>
+  </tr>
+  <tr>
+    <td><b>TOTAL</b></td>
+    <td colspan="2" id="vTOTAL_LIQ2"></td>
+  </tr>
+</table>
+
+<div class="section">RESULTADOS DE LA VERIFICACIÓN</div>
+<table>
+  <tr><th>OC</th><td><input id="inOC"></td><th>AHORRO</th><td><input id="inAhorro"></td></tr>
+  <tr><th>EFECTIVO</th><td><input id="inEfectivo"></td><th>TOTAL</th><td><input id="inTotal"></td></tr>
+</table>
+
+<div class="section">MOTIVO DE LA DERIVACIÓN</div>
+<div class="box"><textarea id="txMotivo"></textarea></div>
+
+<div class="section">COMENTARIOS DE LOS HECHOS</div>
+<div class="box"><textarea id="txHechos"></textarea></div>
+
+<div class="section">ANTECEDENTES DEL ASEGURADO</div>
+<div class="box"><textarea id="txAntecedentes"></textarea></div>
+
+<div class="bigline">Opinión___________________________________________________________</div>
+<div class="box"><textarea id="txContinuidad"></textarea></div>
+
+<div class="bigline">Desarrollo________________________________________________________</div>
+
+<div class="section">Técnico</div>
+<div class="box"><textarea id="txTecnico"></textarea></div>
+
+<div class="section">Clima</div>
+<div class="box"><textarea id="txClima"></textarea></div>
+
+<div class="section">Conclusión</div>
+<div class="box"><textarea id="txConclusion"></textarea></div>
+
+</div>
+
+<script>
+/* ================== CONFIG ================== */
+const LS_CASOS  = "casos_extra_v1";
+const LS_DANOS  = "tabla_danos_siniestros_v1";
+const LS_INF    = "informe_borrador_v3";
+
+/* ================== HELPERS ================== */
+const qp = n => new URLSearchParams(location.search).get(n);
+const sin = qp("sin");
+
+const j = k => { try{return JSON.parse(localStorage.getItem(k)||"{}")}catch{return{}} };
+const money = n => (+n||0).toLocaleString("es-AR",{minimumFractionDigits:2});
+const set = (id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v||""};
+const val = (id,v)=>{const e=document.getElementById(id); if(e && !e.value) e.value=v||""};
+
+/* ================== DATOS CASO ================== */
+const casos = [
+  ...(window.casos||[]),
+  ...(j(LS_CASOS)||[])
+];
+const caso = casos.find(c=>String(c.nSiniestro)===String(sin)) || {};
+
+/* ================== AUTOCOMPLETE ================== */
+set("vCMNIA",caso.compania);
+set("vSINIESTRO",caso.nSiniestro);
+set("vPOLIZA",caso.poliza);
+set("vANALISTA",caso.analista);
+set("vNOMBRE",caso.nombre);
+set("vDNI",caso.dni);
+set("vCALLE",caso.calle);
+set("vNRO",caso.nro);
+set("vPISO",caso.piso);
+set("vLOCALIDAD",caso.localidad);
+set("vPROVINCIA",caso.provincia);
+
+/* ================== TABLA DE DAÑOS ================== */
+const danos = j(LS_DANOS)[sin];
+let s=0,c=0,i=0;
+const tb = document.getElementById("tbCoberturas");
+
+if(danos?.coberturas){
+  tb.innerHTML="";
+  danos.coberturas.forEach(cob=>{
+    let conv=0, ind=0;
+    (cob.items||[]).forEach(it=>{
+      conv+=+it.montoConvenido||0;
+      ind+=+it.montoIndemnizacion||0;
+    });
+    s+=+cob.suma||0; c+=conv; i+=ind;
+    tb.innerHTML+=`
+      <tr>
+        <td>${cob.nombre}</td>
+        <td>${money(cob.suma)}</td>
+        <td>${money(conv)}</td>
+        <td>${money(ind)}</td>
+      </tr>`;
+  });
+}
+set("vSUMAASEG",money(s));
+set("vDANOSCONV",money(c));
+set("vINDEM",money(i));
+set("vTOTAL_LIQ",money(i));
+set("vTOTAL_LIQ2",money(i));
+val("inTotal",money(i));
+
+/* ================== BORRADOR ================== */
+const borr = j(LS_INF)[sin]||{};
+Object.entries(borr).forEach(([k,v])=>val(k,v));
+
+const save=()=>{
+  const d={};
+  document.querySelectorAll("input,textarea").forEach(e=>d[e.id]=e.value);
+  localStorage.setItem(LS_INF,JSON.stringify({...j(LS_INF),[sin]:d}));
+};
+
+/* ================== BOTONES ================== */
+document.getElementById("btnGuardar").onclick=()=>{save(); alert("Borrador guardado");};
+document.getElementById("btnPrint").onclick=()=>{save(); window.print();};
+document.getElementById("btnBorrar").onclick=()=>{
+  const o=j(LS_INF); delete o[sin];
+  localStorage.setItem(LS_INF,JSON.stringify(o));
+  location.reload();
+};
+document.getElementById("btnVolver").onclick=()=>window.close();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>PROYECTO SISTEMA - Lista de casos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* =========================
+       ESTÉTICA BASE (INDEX)
+       ========================= */
+    :root{
+      --bg: #0e1a17;
+      --panel: #11211e;
+      --card: #11211e;
+      --card2: #132623;
+      --text: #e6edf7;
+      --muted: #a9b7d1;
+      --line: rgba(255,255,255,.08);
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --info: #06b6d4;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:14px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,.14), transparent 55%),
+                  radial-gradient(900px 500px at 100% 10%, rgba(34,197,94,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+
+    .app{
+      display:grid;
+      grid-template-columns: 270px 1fr;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      border-right:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 50%);
+      padding:18px 14px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 10px 18px;
+    }
+    .logo{
+      width:36px; height:36px;
+      border-radius:10px;
+      background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.7));
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    }
+    .brand h1{
+      font-size:14px;
+      margin:0;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .brand span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:0 6px;
+    }
+    .nav a{
+      text-decoration:none;
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:var(--radius);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: transparent;
+      border:1px solid transparent;
+    }
+    .nav a:hover{
+      border-color: var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .nav a.active{
+      background: rgba(34,197,94,.12);
+      border-color: rgba(34,197,94,.25);
+    }
+    .nav .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.22);
+    }
+    .nav a.active .dot{ background: var(--accent); }
+
+    .main{
+      padding:18px 18px 28px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    .topbar-left{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 220px;
+    }
+    .topbar h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .topbar p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:9px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:13px;
+      transition: .15s ease;
+      white-space:nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); }
+    .btn.primary{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.14);
+    }
+    .btn.primary:hover{ background: rgba(34,197,94,.18); }
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .card h3{
+      margin:0 0 10px 0;
+      font-size:16px;
+      color: var(--text);
+    }
+    .card p{
+      font-size:13px;
+      color: var(--muted);
+      margin:0 0 12px 0;
+    }
+
+    .footer-card{
+      position:absolute;
+      bottom:14px;
+      left:14px;
+      right:14px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+      .sidebar{ position:relative; height:auto; }
+      .footer-card{ position:relative; left:auto; right:auto; bottom:auto; margin-top:14px; }
+    }
+
+    /* =========================
+       ESTILOS EXISTENTES DE LISTA
+       (adaptados SOLO a la fachada)
+       ========================= */
+
+    /* contenedor de acciones arriba */
+    .top-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    /* inputs de filtros */
+    .panel{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      padding:12px 15px 15px;
+      margin-top:14px;
+    }
+    .panel-titulo{
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:10px;
+      color: var(--text);
+    }
+
+    .filtros{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+    }
+    .filtros label{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      color: var(--muted);
+      font-size:12px;
+    }
+    .filtros input[type="text"],
+    .filtros select{
+      padding:7px 10px;
+      font-size:12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline:none;
+      min-width: 140px;
+    }
+    .filtros input[type="text"]::placeholder{ color: rgba(230,237,247,.55); }
+
+    .filtros button{
+      padding:9px 10px;
+      font-size:13px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      cursor:pointer;
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      transition:.15s ease;
+    }
+    .filtros button:hover{ background: rgba(255,255,255,.08); }
+
+    .hint{
+      margin-top:8px;
+      font-size:11px;
+      color: var(--muted);
+    }
+    .hint code{
+      color: rgba(34,197,94,.9);
+      background: rgba(34,197,94,.08);
+      border: 1px solid rgba(34,197,94,.18);
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+
+    /* panel nuevo caso */
+    #panel-nuevo{
+      display:none;
+      margin-top:14px;
+    }
+    #panel-nuevo h3{
+      margin:0 0 10px 0;
+      font-size:15px;
+      color: var(--text);
+    }
+    #panel-nuevo-form{
+      display:flex;
+      flex-wrap:wrap;
+      gap:15px;
+    }
+    #panel-nuevo-form label{
+      flex: 1 1 200px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    #panel-nuevo-form input[type="text"],
+    #panel-nuevo-form textarea{
+      width:100%;
+      padding:8px 10px;
+      font-size:12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline:none;
+    }
+    #panel-nuevo-botones{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    #panel-nuevo-botones button{
+      padding:9px 10px;
+      font-size:13px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      cursor:pointer;
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+    }
+    #panel-nuevo-botones button:hover{ background: rgba(255,255,255,.08); }
+
+    /* tabla */
+    .tabla-wrapper{
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      max-height: 540px;
+      overflow-y:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+
+    thead{
+      background: rgba(34,197,94,.12);
+      color: var(--text);
+      position:sticky;
+      top:0;
+      z-index:1;
+      backdrop-filter: blur(6px);
+    }
+
+    th, td{
+      padding:7px 6px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:left;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+
+    th.sortable{
+      cursor:pointer;
+      user-select:none;
+    }
+    th.sortable .sort-indicator{
+      font-size:10px;
+      margin-left:4px;
+      opacity:0.8;
+    }
+
+    tbody tr:nth-child(even) td{
+      background: rgba(255,255,255,.015);
+    }
+    tbody tr:hover td{
+      background: rgba(34,197,94,.08);
+    }
+
+    .col-acciones{
+      text-align:center;
+      min-width: 170px;
+    }
+
+    .btn-accion{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding:6px 8px;
+      font-size:12px;
+      border-radius:12px;
+      cursor:pointer;
+      margin: 0 2px;
+      transition:.15s ease;
+    }
+    .btn-accion:hover{ background: rgba(255,255,255,.08); }
+
+    .btn-accion.borrar{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.12);
+      color: var(--text);
+    }
+    .btn-accion.borrar:hover{ background: rgba(239,68,68,.16); }
+
+    .btn-accion.borrar.no-click{
+      opacity:.4;
+      cursor:default;
+    }
+
+    .estado-pill{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+    }
+    .estado-contactar{
+      background: rgba(239,68,68,.22);
+      border-color: rgba(239,68,68,.35);
+      color: var(--text);
+    }
+    .estado-cerrado{
+      background: rgba(34,197,94,.22);
+      border-color: rgba(34,197,94,.35);
+      color: var(--text);
+    }
+
+    .leyenda{
+      margin-top:10px;
+      font-size:11px;
+      color: var(--muted);
+      line-height:1.5;
+    }
+    .leyenda strong{ color: var(--text); }
+
+    /* Responsive (mismo criterio que tenías) */
+    @media (max-width: 900px) {
+      th:nth-child(2), td:nth-child(2),
+      th:nth-child(6), td:nth-child(6),
+      th:nth-child(7), td:nth-child(7) {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      th:nth-child(5), td:nth-child(5),
+      th:nth-child(9), td:nth-child(9) {
+        display: none;
+      }
+      .top-actions{ justify-content:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR (igual a Index) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>PROYECTO SISTEMA</h1>
+          <span>Liquidador de siniestros</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html"><span class="dot"></span>Inicio</a>
+        <a class="active" href="lista.html"><span class="dot"></span>Listado de Casos</a>
+        <a href="tareas.html"><span class="dot"></span>Tareas</a>
+        <a href="reportes.html"><span class="dot"></span>Reportes</a>
+        <a href="facturacion.html"><span class="dot"></span>Facturación</a>
+        <a href="administracion.html"><span class="dot"></span>Administración</a>
+      </nav>
+
+      <!-- IMPORTANTE: dejamos el mismo ID que usaba Lista para no tocar nada del JS -->
+      <div class="footer-card">
+        <div id="infoUsuario"></div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" id="content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2>Listado de casos</h2>
+          <p>Se muestran los casos base (datos.js) más los casos adicionales cargados o importados.</p>
+        </div>
+
+        <!-- Acciones (mismos IDs que antes) -->
+        <div class="top-actions">
+          <button type="button" class="btn" id="btn-ver-tareas">Ver todas mis tareas</button>
+          <button type="button" class="btn primary" id="btn-nuevo">Nuevo caso +</button>
+          <button type="button" class="btn" id="btn-importar">Importar casos (CSV)</button>
+          <input type="file" id="input-import" accept=".csv" style="display:none" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <!-- Filtros (mismo HTML/IDs) -->
+          <section class="panel">
+            <div class="panel-titulo">Filtros</div>
+            <form id="form-buscador">
+              <div class="filtros">
+                <label>
+                  Apellido:
+                  <input type="text" id="f-apellido" />
+                </label>
+                <label>
+                  N° Siniestro:
+                  <input type="text" id="f-siniestro" />
+                </label>
+                <label>
+                  DNI:
+                  <input type="text" id="f-dni" />
+                </label>
+                <label>
+                  N°:
+                  <input type="text" id="f-id" />
+                </label>
+                <label>
+                  Estado:
+                  <select id="f-estado">
+                    <option value="">(Todos)</option>
+                  </select>
+                </label>
+
+                <button type="submit">Buscar</button>
+                <button type="button" id="btn-limpiar">Limpiar filtros</button>
+              </div>
+            </form>
+            <div class="hint">
+              Los estados se guardan por número de siniestro en <code>estados_siniestros_v1</code> (localStorage).
+            </div>
+          </section>
+
+          <!-- PANEL NUEVO CASO (integrado) - mismo HTML/IDs -->
+          <section id="panel-nuevo" class="panel">
+            <h3>Nuevo caso</h3>
+            <div id="panel-nuevo-form">
+              <label>
+                Asegurado<br />
+                <input type="text" id="nc-asegurado" />
+              </label>
+              <label>
+                DNI<br />
+                <input type="text" id="nc-dni" />
+              </label>
+              <label>
+                N° de siniestro<br />
+                <input type="text" id="nc-sin" />
+              </label>
+              <label>
+                Póliza<br />
+                <input type="text" id="nc-poliza" />
+              </label>
+              <label>
+                Compañía<br />
+                <input type="text" id="nc-cia" value="LIFE SEGUROS" />
+              </label>
+              <label>
+                Ramo<br />
+                <input type="text" id="nc-ramo" />
+              </label>
+              <label>
+                Causa<br />
+                <input type="text" id="nc-causa" />
+              </label>
+              <label>
+                Mail<br />
+                <input type="text" id="nc-mail" />
+              </label>
+              <label>
+                Teléfono<br />
+                <input type="text" id="nc-tel" />
+              </label>
+              <label>
+                Analista asignado<br />
+                <input type="text" id="nc-analista" />
+              </label>
+
+              <label style="flex: 1 1 100%;">
+                Comentarios de la compañía<br />
+                <textarea id="nc-comentarios" style="height:80px;"></textarea>
+              </label>
+            </div>
+
+            <div id="panel-nuevo-botones">
+              <button type="button" id="btn-nc-guardar">Guardar</button>
+              <button type="button" id="btn-nc-cancelar">Cancelar</button>
+            </div>
+          </section>
+
+          <!-- TABLA (mismo HTML/IDs) -->
+          <section class="tabla-wrapper">
+            <table id="tabla-casos">
+              <thead>
+                <tr>
+                  <th class="sortable" data-col="id">
+                    N° <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="cia">
+                    Compañía <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="asegurado">
+                    Asegurado <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="nSiniestro">
+                    N° Siniestro <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="dni">
+                    DNI <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="poliza">
+                    Póliza <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="ramo">
+                    Ramo <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="estado">
+                    Estado <span class="sort-indicator"></span>
+                  </th>
+                  <th class="sortable" data-col="analista">
+                    Analista <span class="sort-indicator"></span>
+                  </th>
+                  <th class="col-acciones">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-casos"></tbody>
+            </table>
+          </section>
+
+          <div class="leyenda">
+            Doble clic sobre una fila para abrir el detalle del caso.<br/>
+            Los casos base de <strong>datos.js</strong> no se pueden eliminar desde aquí; solo los casos agregados/importados.
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Datos base -->
+  <script src="datos.js"></script>
+
+  <script>
+    // ========= CONSTANTES / LOCALSTORAGE =========
+    const LS_CASOS_KEY   = "casos_extra_v1";
+    const LS_ESTADOS_KEY = "estados_siniestros_v1";
+
+    const ESTADOS_CASO = [
+      "CONTACTAR",
+      "ENTREVISTAR",
+      "DOCUMENTACIÓN PENDIENTE",
+      "ANALIZAR",
+      "PREINFORMAR",
+      "PREINFORME ENVIADO",
+      "NOTA PENDIENTE",
+      "DESISTIMIENTO PENDIENTE",
+      "DADO DE BAJA",
+      "CERRADO"
+    ];
+
+    // ========= VARIABLES =========
+    let casosExtra     = [];
+    let estadoPorCaso  = {};
+    let listaCompleta  = [];
+    let listaFiltrada  = [];
+    let sortConfig     = { col: "id", dir: 1 }; // orden inicial por N° Caso
+
+    // ========= USUARIO ACTUAL / HEADER =========
+    function obtenerUsuarioActual() {
+      try {
+        const raw = localStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    (function mostrarUsuario() {
+      const currentUser   = obtenerUsuarioActual();
+      const infoUsuarioEl = document.getElementById("infoUsuario");
+      if (!infoUsuarioEl) return;
+
+      const nombre =
+        (currentUser && (currentUser.nombre || currentUser.user || currentUser.username || currentUser.email)) ||
+        "(sin usuario)";
+
+      infoUsuarioEl.textContent = `Usuario: ${nombre}${currentUser?.rol ? " | Rol: " + currentUser.rol : ""}`;
+    })();
+
+    // ========= INIT LOCALSTORAGE =========
+    (function initCasosExtra() {
+      try {
+        const guardado = localStorage.getItem(LS_CASOS_KEY);
+        if (guardado) casosExtra = JSON.parse(guardado);
+      } catch {
+        casosExtra = [];
+      }
+    })();
+
+    (function initEstados() {
+      try {
+        const guardado = localStorage.getItem(LS_ESTADOS_KEY);
+        if (guardado) estadoPorCaso = JSON.parse(guardado);
+      } catch {
+        estadoPorCaso = {};
+      }
+    })();
+
+    function guardarCasosExtra() {
+      try {
+        localStorage.setItem(LS_CASOS_KEY, JSON.stringify(casosExtra));
+      } catch (e) {
+        console.warn("No se pudieron guardar casos extra", e);
+      }
+    }
+
+    function guardarEstados() {
+      try {
+        localStorage.setItem(LS_ESTADOS_KEY, JSON.stringify(estadoPorCaso));
+      } catch (e) {
+        console.warn("No se pudieron guardar estados", e);
+      }
+    }
+
+    // ========= LISTA COMPLETA =========
+    function obtenerTodosLosCasos() {
+      const base   = (window.casos || []).map(c => ({ ...c, esExtra: false }));
+      const extras = (casosExtra || []).map(c => ({ ...c, esExtra: true }));
+      return [...base, ...extras];
+    }
+
+    // ========= SIGUIENTE ID (secuencial, ignora timestamps grandes) =========
+    function calcularSiguienteId() {
+      const todos = obtenerTodosLosCasos();
+      let maxIdSecuencial = 0;
+
+      todos.forEach(c => {
+        const n = Number(c.id);
+        // consideramos "normal" si es positivo y menor a 1 millón (evita Date.now)
+        if (!isNaN(n) && n > 0 && n < 1000000) {
+          if (n > maxIdSecuencial) {
+            maxIdSecuencial = n;
+          }
+        }
+      });
+
+      if (maxIdSecuencial === 0) {
+        return 1;
+      }
+      return maxIdSecuencial + 1;
+    }
+
+    // ========= COMBO ESTADO EN FILTRO =========
+    (function poblarFiltroEstados() {
+      const sel = document.getElementById("f-estado");
+      ESTADOS_CASO.forEach(est => {
+        const opt = document.createElement("option");
+        opt.value = est;
+        opt.textContent = est;
+        sel.appendChild(opt);
+      });
+    })();
+
+    // ========= BUSCADOR / FILTROS =========
+    function aplicarFiltros() {
+      const apellido     = document.getElementById("f-apellido").value.trim().toUpperCase();
+      const sin          = document.getElementById("f-siniestro").value.trim();
+      const dni          = document.getElementById("f-dni").value.trim();
+      const idCaso       = document.getElementById("f-id").value.trim();
+      const estadoFiltro = document.getElementById("f-estado").value.trim();
+
+      listaFiltrada = listaCompleta.filter(caso => {
+        const key          = String(caso.nSiniestro || "");
+        const estadoActual = estadoPorCaso[key] || "";
+
+        if (apellido) {
+          const ape = (caso.asegurado || "").toUpperCase();
+          if (!ape.includes(apellido)) return false;
+        }
+        if (sin && String(caso.nSiniestro || "") !== sin) return false;
+        if (dni && String(caso.dni || "") !== dni) return false;
+        if (idCaso && String(caso.id || "") !== idCaso) return false;
+        if (estadoFiltro && estadoActual !== estadoFiltro) return false;
+
+        return true;
+      });
+
+      aplicarOrden();
+      renderTabla();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById("f-apellido").value  = "";
+      document.getElementById("f-siniestro").value = "";
+      document.getElementById("f-dni").value       = "";
+      document.getElementById("f-id").value        = "";
+      document.getElementById("f-estado").value    = "";
+      listaFiltrada = [...listaCompleta];
+      aplicarOrden();
+      renderTabla();
+    }
+
+    // ========= ORDENAMIENTO =========
+    function aplicarOrden() {
+      if (!sortConfig.col) return;
+
+      const { col, dir } = sortConfig;
+
+      listaFiltrada.sort((a, b) => {
+        let va;
+        let vb;
+
+        if (col === "estado") {
+          va = estadoPorCaso[String(a.nSiniestro)] || "";
+          vb = estadoPorCaso[String(b.nSiniestro)] || "";
+        } else {
+          va = a[col];
+          vb = b[col];
+        }
+
+        if (va == null) va = "";
+        if (vb == null) vb = "";
+
+        // Comparación numérica
+        if (col === "nSiniestro" || col === "dni" || col === "id") {
+          const na = Number(va);
+          const nb = Number(vb);
+          if (!isNaN(na) && !isNaN(nb)) {
+            if (na < nb) return -1 * dir;
+            if (na > nb) return  1 * dir;
+            return 0;
+          }
+        }
+
+        // Comparación de texto
+        va = String(va).toUpperCase();
+        vb = String(vb).toUpperCase();
+        if (va < vb) return -1 * dir;
+        if (va > vb) return  1 * dir;
+        return 0;
+      });
+    }
+
+    function configurarOrdenPorColumna() {
+      const ths = document.querySelectorAll("th.sortable");
+
+      ths.forEach(th => {
+        th.addEventListener("click", () => {
+          const col = th.dataset.col;
+          if (!col) return;
+
+          if (sortConfig.col === col) {
+            sortConfig.dir = -sortConfig.dir;
+          } else {
+            sortConfig.col = col;
+            sortConfig.dir = 1;
+          }
+
+          ths.forEach(t => {
+            const span = t.querySelector(".sort-indicator");
+            if (span) span.textContent = "";
+          });
+
+          const span = th.querySelector(".sort-indicator");
+          if (span) span.textContent = sortConfig.dir === 1 ? "▲" : "▼";
+
+          aplicarOrden();
+          renderTabla();
+        });
+      });
+    }
+
+    // ========= ESTADOS / CLASES =========
+    function obtenerClaseEstado(estado) {
+      if (!estado) return "";
+      if (estado.toUpperCase() === "CONTACTAR") return "estado-contactar";
+      if (estado.toUpperCase() === "CERRADO")   return "estado-cerrado";
+      return "";
+    }
+
+    // ========= NAVEGACIÓN A DETALLE =========
+    function irADetalle(caso, modo = "ver") {
+      const siniestro = String(caso.nSiniestro || "").trim();
+      if (!siniestro) {
+        alert("Este caso no tiene N° de siniestro asignado, no se puede abrir el detalle.");
+        return;
+      }
+      const url = modo
+        ? `detalle.html?sin=${encodeURIComponent(siniestro)}&modo=${encodeURIComponent(modo)}`
+        : `detalle.html?sin=${encodeURIComponent(siniestro)}`;
+      window.location.href = url;
+    }
+
+    // ========= TABLA =========
+    function renderTabla() {
+      const tbody = document.getElementById("tbody-casos");
+      tbody.innerHTML = "";
+
+      listaFiltrada.forEach(caso => {
+        const tr    = document.createElement("tr");
+        const key   = String(caso.nSiniestro || "");
+        const estado = estadoPorCaso[key] || "";
+        const claseEstado = obtenerClaseEstado(estado);
+
+        tr.innerHTML = `
+          <td>${caso.id || ""}</td>
+          <td>${caso.cia || ""}</td>
+          <td>${caso.asegurado || ""}</td>
+          <td>${caso.nSiniestro || ""}</td>
+          <td>${caso.dni || ""}</td>
+          <td>${caso.poliza || ""}</td>
+          <td>${caso.ramo || ""}</td>
+          <td>${estado ? `<span class="estado-pill ${claseEstado}">${estado}</span>` : ""}</td>
+          <td>${caso.analista || ""}</td>
+          <td class="col-acciones">
+            <button type="button" class="btn-accion ver">Ver</button>
+            <button type="button" class="btn-accion editar">Editar</button>
+            <button type="button" class="btn-accion borrar"${caso.esExtra ? "" : " disabled"}>Borrar</button>
+          </td>
+        `;
+
+        // Doble clic en la fila -> detalle (modo ver)
+        tr.addEventListener("dblclick", e => {
+          if (e.target.tagName.toLowerCase() === "button") return;
+          irADetalle(caso, "ver");
+        });
+
+        // Botón VER -> detalle (modo ver)
+        const btnVer = tr.querySelector(".btn-accion.ver");
+        btnVer.addEventListener("click", () => {
+          irADetalle(caso, "ver");
+        });
+
+        // Botón EDITAR -> detalle (modo editar)
+        const btnEditar = tr.querySelector(".btn-accion.editar");
+        btnEditar.addEventListener("click", () => {
+          irADetalle(caso, "editar");
+        });
+
+        // Botón BORRAR -> solo extra
+        const btnBorrar = tr.querySelector(".btn-accion.borrar");
+        if (caso.esExtra) {
+          btnBorrar.addEventListener("click", () => {
+            if (!confirm("¿Eliminar este caso extra?")) return;
+            const indice = casosExtra.findIndex(c => String(c.id) === String(caso.id));
+            if (indice >= 0) {
+              casosExtra.splice(indice, 1);
+              guardarCasosExtra();
+              recargarLista();
+            }
+          });
+        } else {
+          btnBorrar.classList.add("no-click");
+        }
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ========= RECARGAR LISTA COMPLETA =========
+    function recargarLista() {
+      listaCompleta = obtenerTodosLosCasos();
+      listaFiltrada = [...listaCompleta];
+      aplicarOrden();
+      renderTabla();
+
+      const thId = document.querySelector('th.sortable[data-col="id"] .sort-indicator');
+      if (thId && sortConfig.col === "id") {
+        thId.textContent = sortConfig.dir === 1 ? "▲" : "▼";
+      }
+    }
+
+    // ========= EVENTOS: FILTROS =========
+    document.getElementById("form-buscador").addEventListener("submit", (e) => {
+      e.preventDefault();
+      aplicarFiltros();
+    });
+
+    document.getElementById("btn-limpiar").addEventListener("click", () => {
+      limpiarFiltros();
+    });
+
+    // ========= BOTÓN VER TAREAS =========
+    document.getElementById("btn-ver-tareas").addEventListener("click", () => {
+      window.location.href = "tareas.html";
+    });
+
+    // ========= NUEVO CASO (panel integrado) =========
+    const panelNuevo      = document.getElementById("panel-nuevo");
+    const inputNcAseg     = document.getElementById("nc-asegurado");
+    const inputNcDni      = document.getElementById("nc-dni");
+    const inputNcSin      = document.getElementById("nc-sin");
+    const inputNcPoliza   = document.getElementById("nc-poliza");
+    const inputNcCia      = document.getElementById("nc-cia");
+    const inputNcRamo     = document.getElementById("nc-ramo");
+    const inputNcCausa    = document.getElementById("nc-causa");
+    const inputNcMail     = document.getElementById("nc-mail");
+    const inputNcTel      = document.getElementById("nc-tel");
+    const inputNcAnalista = document.getElementById("nc-analista");
+    const inputNcComentarios = document.getElementById("nc-comentarios");
+    const btnNcGuardar    = document.getElementById("btn-nc-guardar");
+    const btnNcCancelar   = document.getElementById("btn-nc-cancelar");
+
+    document.getElementById("btn-nuevo").addEventListener("click", () => {
+      panelNuevo.style.display = "block";
+      inputNcAseg.focus();
+    });
+
+    btnNcGuardar.addEventListener("click", () => {
+      const asegurado = inputNcAseg.value.trim();
+      const dni       = inputNcDni.value.trim();
+      const sin       = inputNcSin.value.trim();
+      const poliza    = inputNcPoliza.value.trim();
+      const cia       = inputNcCia.value.trim();
+      const ramo      = inputNcRamo.value.trim();
+      const causa     = inputNcCausa.value.trim();
+      const mail      = inputNcMail.value.trim();
+      const tel       = inputNcTel.value.trim();
+      const analista  = inputNcAnalista.value.trim();
+
+      if (!asegurado || !dni || !sin) {
+        alert("Asegurado, DNI y N° de siniestro son obligatorios.");
+        return;
+      }
+
+      const nuevoId = calcularSiguienteId();
+
+      const nuevo = {
+        id:         nuevoId,
+        cia:        cia,
+        asegurado:  asegurado,
+        dni:        dni,
+        nSiniestro: sin,
+        poliza:     poliza,
+        ramo:       ramo,
+        causa:      causa,
+        analista:   analista,
+        mail:       mail,
+        telefono:   tel,
+        comentarios: inputNcComentarios.value.trim(),
+        esExtra:    true
+      };
+
+      casosExtra.push(nuevo);
+
+      // estado inicial "CONTACTAR" para este siniestro
+      estadoPorCaso[String(sin)] = "CONTACTAR";
+      guardarCasosExtra();
+      guardarEstados();
+      recargarLista();
+
+      // limpiar formulario
+      inputNcAseg.value     = "";
+      inputNcDni.value      = "";
+      inputNcSin.value      = "";
+      inputNcPoliza.value   = "";
+      inputNcCia.value      = "LIFE SEGUROS";
+      inputNcRamo.value     = "";
+      inputNcCausa.value    = "";
+      inputNcMail.value     = "";
+      inputNcTel.value      = "";
+      inputNcAnalista.value = "";
+      inputNcComentarios.value = "";
+
+      panelNuevo.style.display = "none";
+    });
+
+    btnNcCancelar.addEventListener("click", () => {
+      panelNuevo.style.display = "none";
+    });
+
+    // ========= IMPORTAR CSV =========
+    const btnImportar = document.getElementById("btn-importar");
+    const inputImport = document.getElementById("input-import");
+
+    btnImportar.addEventListener("click", () => {
+      inputImport.click();
+    });
+
+    inputImport.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const texto = ev.target.result;
+          importarDesdeCSV(texto);
+          alert("Casos importados correctamente.");
+          recargarLista();
+        } catch (err) {
+          console.error(err);
+          alert("Hubo un problema al importar el archivo. Revisá el formato.");
+        } finally {
+          inputImport.value = "";
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    });
+
+    function importarDesdeCSV(texto) {
+      const lineasRaw = texto.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (lineasRaw.length === 0) throw new Error("CSV vacío");
+
+      const primera = lineasRaw[0].trim();
+      const sep     = primera.includes(";") ? ";" : ",";
+
+      const headers = primera.split(sep).map(h => h.trim().toLowerCase());
+
+      const posiblesCampos = ["cia", "asegurado", "dni", "nsiniestro", "n siniestro", "nro siniestro"];
+      const tieneHeader    = headers.some(h => posiblesCampos.includes(h));
+
+      let inicioDatos = 0;
+
+      let idxId        = null;
+      let idxCia       = null;
+      let idxAsegurado = null;
+      let idxDni       = null;
+      let idxSin       = null;
+      let idxPoliza    = null;
+      let idxRamo      = null;
+      let idxCausa     = null;
+      let idxAnalista  = null;
+      let idxMail      = null;
+      let idxTel       = null;
+
+      if (tieneHeader) {
+        inicioDatos = 1;
+
+        const idx = (nombre) => {
+          const i = headers.indexOf(nombre.toLowerCase());
+          return i === -1 ? null : i;
+        };
+
+        idxId        = idx("id");
+        idxCia       = idx("cia");
+        idxAsegurado = idx("asegurado");
+        idxDni       = idx("dni");
+        idxSin       = idx("nsiniestro") ?? idx("n siniestro") ?? idx("nro siniestro");
+        idxPoliza    = idx("poliza");
+        idxRamo      = idx("ramo");
+        idxCausa     = idx("causa");
+        idxAnalista  = idx("analista");
+        idxMail      = idx("mail");
+        idxTel       = idx("telefono") ?? idx("tel");
+      } else {
+        inicioDatos  = 0;
+        idxId        = 0;
+        idxCia       = 1;
+        idxAsegurado = 2;
+        idxDni       = 3;
+        idxSin       = 4;
+        idxPoliza    = 5;
+        idxRamo      = 6;
+        idxCausa     = 7;
+        idxAnalista  = 8;
+        idxMail      = 9;
+        idxTel       = 10;
+      }
+
+      const col = (cols, idx) => {
+        if (idx === null || idx >= cols.length) return "";
+        return (cols[idx] || "").trim();
+      };
+
+      for (let i = inicioDatos; i < lineasRaw.length; i++) {
+        const linea = lineasRaw[i];
+        if (!linea.trim()) continue;
+
+        const cols = linea.split(sep);
+
+        const obj = {
+          id:         col(cols, idxId) || (Date.now() + i),
+          cia:        col(cols, idxCia),
+          asegurado:  col(cols, idxAsegurado),
+          dni:        col(cols, idxDni),
+          nSiniestro: col(cols, idxSin),
+          poliza:     col(cols, idxPoliza),
+          ramo:       col(cols, idxRamo),
+          causa:      col(cols, idxCausa),
+          analista:   col(cols, idxAnalista),
+          mail:       col(cols, idxMail),
+          telefono:   col(cols, idxTel)
+        };
+
+        const yaEsta = casosExtra.some(c => String(c.nSiniestro) === String(obj.nSiniestro));
+        if (!yaEsta) {
+          casosExtra.push(obj);
+        }
+      }
+
+      guardarCasosExtra();
+    }
+
+    // ========= INICIALIZACIÓN GENERAL =========
+    (function init() {
+      recargarLista();
+      configurarOrdenPorColumna();
+    })();
+  </script>
+</body>
+</html>

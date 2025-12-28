@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>PROYECTO SISTEMA - Facturación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* =========================
+       FACHADA (ESTILO INDEX)
+       ========================= */
+    :root{
+      --bg:#0e1a17;
+      --panel:#11211e;
+      --card:#11211e;
+      --text:#e6edf7;
+      --muted:#a9b7d1;
+      --line:rgba(255,255,255,.08);
+      --accent:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --info:#06b6d4;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:14px;
+      --topbarH:56px;
+      --sideW:270px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,.14), transparent 55%),
+        radial-gradient(900px 500px at 100% 10%, rgba(34,197,94,.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    /* TOPBAR (reemplaza header viejo) */
+    header{
+      height: var(--topbarH);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1200;
+      backdrop-filter: blur(6px);
+    }
+
+    .header-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 220px;
+    }
+
+    .menu-toggle{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 18px;
+      padding: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .menu-toggle:hover{ background: rgba(255,255,255,.08); }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo img{
+      height: 28px;
+      width: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    .titulo{
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      line-height: 1.1;
+    }
+
+    .usuario{
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      max-width: 55vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ----- SIDEBAR (MISMO ID: sidebar) ----- */
+    .sidebar{
+      position: fixed;
+      top: var(--topbarH);
+      left: 0;
+      width: var(--sideW);
+      height: calc(100vh - var(--topbarH));
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 55%);
+      padding: 16px 12px;
+      transition: transform 0.25s ease;
+      z-index: 1100;
+      overflow-y: auto;
+    }
+
+    /* comportamiento desktop (botón ☰ colapsa) */
+    .sidebar.collapsed{
+      transform: translateX(calc(var(--sideW) * -1));
+    }
+
+    /* comportamiento mobile: por defecto oculto; "open" lo muestra */
+    @media (max-width: 768px){
+      .sidebar{
+        transform: translateX(calc(var(--sideW) * -1));
+      }
+      .sidebar.open{
+        transform: translateX(0);
+      }
+      .sidebar.collapsed{
+        transform: translateX(calc(var(--sideW) * -1));
+      }
+    }
+
+    /* Menú dentro del sidebar (reutiliza .menu-item existente) */
+    .menu-item{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-align: left;
+      padding: 10px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      background: rgba(255,255,255,.03);
+      margin: 8px 4px;
+      text-transform: none;
+    }
+    .menu-item a{
+      text-decoration:none;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    .menu-item a::before{
+      content:"";
+      width:8px;height:8px;border-radius:50%;
+      background: rgba(255,255,255,.25);
+      flex: 0 0 auto;
+    }
+    .menu-item:hover{
+      background: rgba(255,255,255,.06);
+    }
+    .menu-item b{ color: var(--text); }
+
+    /* ----- CONTENIDO (MISMO ID: content) ----- */
+    main.content{
+      margin-left: var(--sideW);
+      padding: 18px 18px 28px;
+      transition: margin-left 0.25s ease;
+    }
+    main.content.collapsed{
+      margin-left: 0;
+    }
+
+    @media (max-width: 768px){
+      main.content{
+        margin-left: 0;
+      }
+    }
+
+    h1{
+      margin: 6px 0 6px;
+      font-size: 20px;
+      letter-spacing: .2px;
+    }
+
+    .subtitulo{
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      max-width: 1100px;
+      line-height: 1.35;
+    }
+
+    /* Cards */
+    .card{
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+    .card p{
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    /* Filtros */
+    .filtros{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 18px;
+      font-size: 12px;
+      margin-top: 8px;
+      align-items: flex-end;
+    }
+    .filtros label{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      color: var(--muted);
+    }
+    .filtros input,
+    .filtros select{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      min-width: 180px;
+      outline: none;
+    }
+    .filtros input::placeholder{ color: rgba(230,237,247,.55); }
+
+    /* Botones */
+    .btn{
+      appearance:none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 9px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 12px;
+      margin-top: 14px;
+      margin-right: 6px;
+      transition: .15s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); }
+    #btn-aplicar{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.14);
+    }
+    #btn-aplicar:hover{ background: rgba(34,197,94,.18); }
+
+    /* Tabla */
+    .tabla-wrapper{
+      margin-top: 10px;
+      overflow: auto;
+      max-height: calc(100vh - 260px);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    thead{
+      background: rgba(34,197,94,.15);
+      color: var(--text);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      backdrop-filter: blur(6px);
+    }
+    th, td{
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding: 7px 6px;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    tbody tr:nth-child(even) td{
+      background: rgba(255,255,255,.015);
+    }
+    tbody tr:hover td{
+      background: rgba(34,197,94,.08);
+    }
+
+    .col-num{ text-align: right; }
+
+    .estado-pill{
+      display:inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+    }
+    .estado-sin{
+      background: rgba(148,163,184,.18);
+      border-color: rgba(148,163,184,.28);
+    }
+    .estado-pendiente{
+      background: rgba(245,158,11,.20);
+      border-color: rgba(245,158,11,.35);
+    }
+    .estado-pagada{
+      background: rgba(34,197,94,.20);
+      border-color: rgba(34,197,94,.35);
+    }
+
+    .resumen{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .resumen strong{
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .acciones-tabla{
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .acciones-tabla input,
+    .acciones-tabla select{
+      font-size: 11px;
+      padding: 7px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      max-width: 180px;
+      outline: none;
+    }
+
+    .link-caso a{
+      color: #86efac;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .link-caso a:hover{
+      text-decoration: underline;
+    }
+
+    /* responsive: ocultar columnas como ya tenías */
+    @media (max-width: 768px) {
+      th:nth-child(4),
+      td:nth-child(4),
+      th:nth-child(5),
+      td:nth-child(5) {
+        display: none;
+      }
+    }
+/* ===== SIDEBAR igual a INDEX ===== */
+.sidebar{
+  border-right:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 50%);
+  padding:18px 14px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 10px 18px;
+}
+.brand h1{
+  font-size:14px;
+  margin:0;
+  line-height:1.2;
+  letter-spacing:.2px;
+}
+.brand span{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+/* logo “cuadradito verde” como Index */
+.sidebar .logo{
+  width:36px; height:36px;
+  border-radius:10px;
+  background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.7));
+  box-shadow: 0 10px 22px rgba(0,0,0,.35);
+}
+
+/* navegación con dots */
+.sidebar .nav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:0 6px;
+}
+.sidebar .nav a{
+  text-decoration:none;
+  color:var(--text);
+  padding:10px 10px;
+  border-radius:var(--radius);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background: transparent;
+  border:1px solid transparent;
+}
+.sidebar .nav a:hover{
+  border-color: var(--line);
+  background: rgba(255,255,255,.03);
+}
+.sidebar .nav a.active{
+  background: rgba(34,197,94,.12);
+  border-color: rgba(34,197,94,.25);
+}
+.sidebar .dot{
+  width:8px;height:8px;border-radius:999px;
+  background: rgba(255,255,255,.22);
+}
+.sidebar .nav a.active .dot{ background: var(--accent); }
+
+/* footer-card como Index */
+.sidebar .footer-card{
+  position:absolute;
+  bottom:14px;
+  left:14px;
+  right:14px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  font-size:12px;
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- TOPBAR (mismo id de toggle para no romper JS) -->
+  <header>
+    <div class="header-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú lateral">☰</button>
+      <div class="logo">
+        <img src="logo_gibert.png" alt="Logo Estudio HM Gibert" />
+        <div class="titulo">PROYECTO SISTEMA - Facturación</div>
+      </div>
+    </div>
+    <div class="usuario" id="infoUsuario"></div>
+  </header>
+
+  <!-- SIDEBAR (mismo id: sidebar) -->
+ <nav class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <h1>PROYECTO SISTEMA</h1>
+      <span>Liquidador de siniestros</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a href="index.html"><span class="dot"></span>Inicio</a>
+    <a href="lista.html"><span class="dot"></span>Listado de Casos</a>
+    <a href="tareas.html"><span class="dot"></span>Tareas</a>
+    <a href="reportes.html"><span class="dot"></span>Reportes</a>
+    <a class="active" href="facturacion.html"><span class="dot"></span>Facturación</a>
+    <a href="administracion.html"><span class="dot"></span>Administración</a>
+  </nav>
+
+  <div class="footer-card">
+    <div id="infoUsuarioSidebar"></div>
+  </div>
+</nav>
+
+
+  <!-- CONTENIDO (mismo id: content) -->
+  <main class="content" id="content">
+    <h1>Facturación</h1>
+    <div class="subtitulo">
+      Control interno de facturas emitidas por caso. Podés ver qué está facturado, qué está pendiente de cobro
+      y registrar las órdenes de pago que llegan de las compañías.
+    </div>
+
+    <section class="card">
+      <h2>Filtros</h2>
+      <p>
+        Usá estos filtros para ver las facturas por período, estado de pago, analista o compañía.
+      </p>
+      <div class="filtros">
+        <label>
+          Buscar
+          <input type="text" id="f-buscar" placeholder="Siniestro, asegurado, analista, compañía, factura, OP..." />
+        </label>
+
+        <label>
+          Estado factura
+          <select id="f-estado">
+            <option value="">(Todos)</option>
+            <option value="SIN_FACTURAR">Sin facturar / borrador</option>
+            <option value="PENDIENTE">Facturada – pendiente de pago</option>
+            <option value="PAGADA">Pagada</option>
+          </select>
+        </label>
+
+        <label>
+          Período (emisión)
+          <input type="month" id="f-periodo" />
+        </label>
+
+        <label>
+          Analista
+          <input type="text" id="f-analista" placeholder="Nombre analista" />
+        </label>
+
+        <label>
+          Compañía
+          <input type="text" id="f-compania" placeholder="Ej: LIFE SEGUROS" />
+        </label>
+      </div>
+
+      <button class="btn" id="btn-aplicar">Aplicar filtros</button>
+      <button class="btn" id="btn-limpiar">Limpiar</button>
+      <button class="btn" id="btn-exportar">Exportar a CSV</button>
+    </section>
+
+    <section class="card" id="accionesMasivas">
+      <h2>Acciones masivas</h2>
+      <p>
+        Seleccioná varias filas para asignarlas a una misma orden de pago o marcar varias como pagadas de una sola vez.
+      </p>
+
+      <div class="filtros" style="align-items:flex-end;">
+        <label>
+          Orden de pago (OP)
+          <input type="text" id="bulk-orden" placeholder="Ej: OP-1234" />
+        </label>
+
+        <label>
+          Fecha de cobro
+          <input type="date" id="bulk-fecha" />
+        </label>
+
+        <label>
+          Estado pago
+          <select id="bulk-estado">
+            <option value="">(No cambiar)</option>
+            <option value="SIN_FACTURAR">Sin facturar</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="PAGADA">Pagada</option>
+          </select>
+        </label>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn" id="btn-aplicar-masivo">Aplicar a seleccionados</button>
+          <button class="btn" id="btn-limpiar-seleccion">Limpiar selección</button>
+        </div>
+      </div>
+
+      <div class="resumen" id="resumenSeleccion">
+        Seleccionados: <strong>0</strong> | Total seleccionado: <strong>$ 0,00</strong>
+      </div>
+    </section>
+
+    <section class="tabla-wrapper">
+      <table id="tablaFacturas">
+        <thead>
+          <tr>
+            <th style="width:28px; text-align:center;">
+              <input type="checkbox" id="chk-all-visible" title="Seleccionar / deseleccionar todo lo visible" />
+            </th>
+            <th class="col-num">N° Sin.</th>
+            <th>Asegurado</th>
+            <th>Compañía</th>
+            <th>Analista</th>
+            <th>F. Emisión</th>
+            <th>Factura</th>
+            <th class="col-num">Subt. Neto</th>
+            <th class="col-num">IVA</th>
+            <th class="col-num">Total</th>
+            <th>Estado pago</th>
+            <th>Datos de cobro</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyFacturas">
+          <tr>
+            <td colspan="12" style="text-align:center; padding:10px; color:#9aa8c2;">
+              Sin datos de facturación por ahora.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="resumen" id="resumenFacturas"></div>
+  </main>
+
+  <!-- ====== JS ORIGINAL (SIN TOCAR) ====== -->
+  <script src="datos.js"></script>
+  <script>
+    const LS_CASOS_KEY = "casos_extra_v1";
+    const LS_FACTURAS_KEY = "facturas_siniestros_v1";
+
+    // Selección múltiple (para acciones masivas)
+    const selectedSet = new Set();
+    let ultimoFiltrado = [];
+
+    function obtenerUsuarioActual() {
+      try {
+        const raw = localStorage.getItem("currentUser");
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function formatearMonto(valor) {
+      const num = Number(valor) || 0;
+      return num.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatearFechaCorta(isoDate) {
+      if (!isoDate) return "";
+      const d = new Date(isoDate + "T00:00:00");
+      if (isNaN(d.getTime())) return isoDate;
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      return dia + "/" + mes + "/" + anio;
+    }
+
+    function normalizarCadena(str) {
+      return (str || "").toString().toLowerCase();
+    }
+
+    function obtenerCasosBase() {
+      // casos viene de datos.js
+      if (Array.isArray(window.casos)) return window.casos.slice();
+      return [];
+    }
+
+    function obtenerCasosExtra() {
+      try {
+        const raw = localStorage.getItem(LS_CASOS_KEY);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function obtenerMapaCasosPorSiniestro() {
+      const mapa = {};
+      const todos = [...obtenerCasosBase(), ...obtenerCasosExtra()];
+      todos.forEach(caso => {
+        const key = String(caso.nSiniestro ?? "").trim();
+        if (!key) return;
+        mapa[key] = caso;
+      });
+      return mapa;
+    }
+
+    function cargarFacturasDesdeStorage() {
+      try {
+        const raw = localStorage.getItem(LS_FACTURAS_KEY);
+        if (!raw) return {};
+        const obj = JSON.parse(raw);
+        return obj && typeof obj === "object" ? obj : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function guardarFacturasEnStorage(facturasPorCaso) {
+      try {
+        localStorage.setItem(LS_FACTURAS_KEY, JSON.stringify(facturasPorCaso));
+      } catch (e) {
+        console.error("No se pudieron guardar las facturas:", e);
+      }
+    }
+
+    function construirListadoFacturas() {
+      const mapaCasos = obtenerMapaCasosPorSiniestro();
+      const facturasPorCaso = cargarFacturasDesdeStorage();
+      const listado = [];
+
+      Object.keys(facturasPorCaso).forEach(key => {
+        const factura = facturasPorCaso[key];
+        if (!factura) return;
+
+        const caso = mapaCasos[key] || {};
+        const asegurado = caso.asegurado || caso.nombre || "";
+        const analista = caso.analista || "";
+        const compania = caso.cia || caso.compania || caso.companía || "";
+
+        listado.push({
+          nSiniestro: key,
+          asegurado,
+          analista,
+          compania,
+          puntoVenta: factura.puntoVenta || "",
+          numeroFactura: factura.numeroFactura || "",
+          fechaEmision: factura.fechaEmision || "",
+          cae: factura.cae || "",
+          estadoPago: factura.estadoPago || "SIN_FACTURAR",
+          fechaCobro: factura.fechaCobro || "",
+          ordenPago: factura.ordenPago || "",
+          totalNeto: Number(factura.totalNeto) || 0,
+          totalIva: Number(factura.totalIva) || 0,
+          totalGeneral: Number(factura.totalGeneral) || 0
+        });
+      });
+
+      return listado;
+    }
+
+    function aplicarFiltros(listado) {
+      const txt = normalizarCadena(document.getElementById("f-buscar").value);
+      const estado = document.getElementById("f-estado").value;
+      const periodo = document.getElementById("f-periodo").value; // YYYY-MM
+      const analista = normalizarCadena(document.getElementById("f-analista").value);
+      const compania = normalizarCadena(document.getElementById("f-compania").value);
+
+      return listado.filter(f => {
+        if (estado && f.estadoPago !== estado) return false;
+
+        if (periodo && f.fechaEmision) {
+          // comparamos año-mes
+          const yymm = f.fechaEmision.slice(0, 7); // YYYY-MM
+          if (yymm !== periodo) return false;
+        }
+
+        if (analista && !normalizarCadena(f.analista).includes(analista)) return false;
+        if (compania && !normalizarCadena(f.compania).includes(compania)) return false;
+
+        if (txt) {
+          const blob =
+            normalizarCadena(f.nSiniestro) + " " +
+            normalizarCadena(f.asegurado) + " " +
+            normalizarCadena(f.analista) + " " +
+            normalizarCadena(f.compania) + " " +
+            normalizarCadena(f.puntoVenta + "-" + f.numeroFactura) + " " +
+            normalizarCadena(f.ordenPago);
+          if (!blob.includes(txt)) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function pintarTabla(listado, facturasPorCaso) {
+      const tbody = document.getElementById("tbodyFacturas");
+      tbody.innerHTML = "";
+
+      if (!listado.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 12;
+        td.textContent = "Sin facturas que coincidan con los filtros.";
+        td.style.textAlign = "center";
+        td.style.padding = "10px";
+        td.style.color = "#9aa8c2";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      listado.sort((a, b) => {
+        const na = parseInt(a.nSiniestro, 10);
+        const nb = parseInt(b.nSiniestro, 10);
+        if (!isNaN(na) && !isNaN(nb)) return na - nb;
+        return String(a.nSiniestro).localeCompare(String(b.nSiniestro));
+      });
+
+      listado.forEach(f => {
+        const tr = document.createElement("tr");
+
+        // Checkbox de selección
+        const tdSel = document.createElement("td");
+        tdSel.style.textAlign = "center";
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.className = "row-select";
+        chk.dataset.sin = String(f.nSiniestro);
+        chk.checked = selectedSet.has(String(f.nSiniestro));
+        chk.addEventListener("change", () => {
+          const key = String(f.nSiniestro);
+          if (chk.checked) selectedSet.add(key);
+          else selectedSet.delete(key);
+          actualizarResumenSeleccion(ultimoFiltrado);
+          actualizarHeaderSelectAll();
+        });
+        tdSel.appendChild(chk);
+        tr.appendChild(tdSel);
+
+        const tdSin = document.createElement("td");
+        tdSin.className = "col-num link-caso";
+        tdSin.innerHTML = `<a href="detalle.html?sin=${encodeURIComponent(f.nSiniestro)}" target="_blank">${f.nSiniestro}</a>`;
+        tr.appendChild(tdSin);
+
+        const tdAseg = document.createElement("td");
+        tdAseg.textContent = f.asegurado || "";
+        tr.appendChild(tdAseg);
+
+        const tdCia = document.createElement("td");
+        tdCia.textContent = f.compania || "";
+        tr.appendChild(tdCia);
+
+        const tdAnalista = document.createElement("td");
+        tdAnalista.textContent = f.analista || "";
+        tr.appendChild(tdAnalista);
+
+        const tdFechaEmi = document.createElement("td");
+        tdFechaEmi.textContent = formatearFechaCorta(f.fechaEmision);
+        tr.appendChild(tdFechaEmi);
+
+        const tdFactura = document.createElement("td");
+        const nro = f.puntoVenta && f.numeroFactura
+          ? f.puntoVenta + "-" + f.numeroFactura
+          : (f.numeroFactura || "");
+        tdFactura.textContent = nro;
+        tr.appendChild(tdFactura);
+
+        const tdSub = document.createElement("td");
+        tdSub.className = "col-num";
+        tdSub.textContent = formatearMonto(f.totalNeto);
+        tr.appendChild(tdSub);
+
+        const tdIva = document.createElement("td");
+        tdIva.className = "col-num";
+        tdIva.textContent = formatearMonto(f.totalIva);
+        tr.appendChild(tdIva);
+
+        const tdTot = document.createElement("td");
+        tdTot.className = "col-num";
+        tdTot.textContent = formatearMonto(f.totalGeneral);
+        tr.appendChild(tdTot);
+
+        const tdEstado = document.createElement("td");
+        const pill = document.createElement("span");
+        pill.classList.add("estado-pill");
+        if (f.estadoPago === "PAGADA") {
+          pill.classList.add("estado-pagada");
+          pill.textContent = "PAGADA";
+        } else if (f.estadoPago === "PENDIENTE") {
+          pill.classList.add("estado-pendiente");
+          pill.textContent = "PENDIENTE";
+        } else {
+          pill.classList.add("estado-sin");
+          pill.textContent = "SIN FACTURAR";
+        }
+        tdEstado.appendChild(pill);
+        tr.appendChild(tdEstado);
+
+        const tdCobro = document.createElement("td");
+        const cont = document.createElement("div");
+        cont.className = "acciones-tabla";
+
+        const selEstado = document.createElement("select");
+        selEstado.innerHTML = `
+          <option value="SIN_FACTURAR">Sin facturar</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="PAGADA">Pagada</option>
+        `;
+        selEstado.value = f.estadoPago || "SIN_FACTURAR";
+
+        const inputFechaCobro = document.createElement("input");
+        inputFechaCobro.type = "date";
+        inputFechaCobro.value = f.fechaCobro || "";
+
+        const inputOrden = document.createElement("input");
+        inputOrden.type = "text";
+        inputOrden.placeholder = "Orden de pago";
+        inputOrden.value = f.ordenPago || "";
+
+        cont.appendChild(selEstado);
+        cont.appendChild(inputFechaCobro);
+        cont.appendChild(inputOrden);
+
+        tdCobro.appendChild(cont);
+        tr.appendChild(tdCobro);
+
+        // Eventos de actualización
+        selEstado.addEventListener("change", () => {
+          const key = String(f.nSiniestro);
+          const factura = facturasPorCaso[key] || {};
+          factura.estadoPago = selEstado.value;
+          factura.fechaCobro = inputFechaCobro.value || "";
+          factura.ordenPago = inputOrden.value.trim();
+          facturasPorCaso[key] = factura;
+          guardarFacturasEnStorage(facturasPorCaso);
+          // actualizar pill
+          if (selEstado.value === "PAGADA") {
+            pill.className = "estado-pill estado-pagada";
+            pill.textContent = "PAGADA";
+          } else if (selEstado.value === "PENDIENTE") {
+            pill.className = "estado-pill estado-pendiente";
+            pill.textContent = "PENDIENTE";
+          } else {
+            pill.className = "estado-pill estado-sin";
+            pill.textContent = "SIN FACTURAR";
+          }
+          actualizarResumen(listado);
+          actualizarResumenSeleccion(listado);
+          actualizarHeaderSelectAll();
+        });
+
+        inputFechaCobro.addEventListener("change", () => {
+          const key = String(f.nSiniestro);
+          const factura = facturasPorCaso[key] || {};
+          factura.fechaCobro = inputFechaCobro.value || "";
+          factura.estadoPago = selEstado.value;
+          factura.ordenPago = inputOrden.value.trim();
+          facturasPorCaso[key] = factura;
+          guardarFacturasEnStorage(facturasPorCaso);
+        });
+
+        inputOrden.addEventListener("input", () => {
+          const key = String(f.nSiniestro);
+          const factura = facturasPorCaso[key] || {};
+          factura.ordenPago = inputOrden.value.trim();
+          factura.fechaCobro = inputFechaCobro.value || "";
+          factura.estadoPago = selEstado.value;
+          facturasPorCaso[key] = factura;
+          guardarFacturasEnStorage(facturasPorCaso);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function actualizarHeaderSelectAll() {
+      const chkAll = document.getElementById("chk-all-visible");
+      if (!chkAll) return;
+      const visibles = (ultimoFiltrado || []).map(f => String(f.nSiniestro));
+      if (!visibles.length) {
+        chkAll.checked = false;
+        chkAll.indeterminate = false;
+        return;
+      }
+      const selCount = visibles.filter(k => selectedSet.has(k)).length;
+      chkAll.checked = selCount === visibles.length;
+      chkAll.indeterminate = selCount > 0 && selCount < visibles.length;
+    }
+
+    function actualizarResumenSeleccion(listadoVisible) {
+      const el = document.getElementById("resumenSeleccion");
+      if (!el) return;
+
+      const visibles = Array.isArray(listadoVisible) ? listadoVisible : [];
+      const seleccionadosVisibles = visibles.filter(f => selectedSet.has(String(f.nSiniestro)));
+
+      let totalSel = 0;
+      seleccionadosVisibles.forEach(f => { totalSel += Number(f.totalGeneral) || 0; });
+
+      el.innerHTML =
+        "Seleccionados: <strong>" + selectedSet.size + "</strong> | " +
+        "Total seleccionado (visible): <strong>$ " + formatearMonto(totalSel) + "</strong>";
+    }
+
+    function actualizarResumen(listado) {
+      const resumenEl = document.getElementById("resumenFacturas");
+      if (!listado.length) {
+        resumenEl.textContent = "";
+        return;
+      }
+
+      let totalNeto = 0;
+      let totalIva = 0;
+      let total = 0;
+      let totalPendiente = 0;
+      let totalPagado = 0;
+
+      listado.forEach(f => {
+        totalNeto += Number(f.totalNeto) || 0;
+        totalIva += Number(f.totalIva) || 0;
+        total += Number(f.totalGeneral) || 0;
+        if (f.estadoPago === "PENDIENTE") totalPendiente += Number(f.totalGeneral) || 0;
+        if (f.estadoPago === "PAGADA") totalPagado += Number(f.totalGeneral) || 0;
+      });
+
+      resumenEl.innerHTML =
+        "Facturas listadas: <strong>" + listado.length + "</strong> | " +
+        "Subtotal neto: <strong>$ " + formatearMonto(totalNeto) + "</strong> | " +
+        "IVA: <strong>$ " + formatearMonto(totalIva) + "</strong> | " +
+        "Total facturado: <strong>$ " + formatearMonto(total) + "</strong> | " +
+        "Pendiente de cobro: <strong>$ " + formatearMonto(totalPendiente) + "</strong> | " +
+        "Cobrado: <strong>$ " + formatearMonto(totalPagado) + "</strong>";
+    }
+
+    function exportarCSV(listado) {
+      if (!listado.length) {
+        alert("No hay facturas para exportar.");
+        return;
+      }
+
+      const encabezados = [
+        "N_Siniestro","Asegurado","Compania","Analista","Fecha_Emision","Punto_Venta","Numero_Factura",
+        "Subtotal_Neto","IVA","Total","Estado_Pago","Fecha_Cobro","Orden_Pago"
+      ];
+
+      const filas = listado.map(f => [
+        f.nSiniestro,
+        (f.asegurado || "").replace(/;/g, ","),
+        (f.compania || "").replace(/;/g, ","),
+        (f.analista || "").replace(/;/g, ","),
+        f.fechaEmision,
+        f.puntoVenta,
+        f.numeroFactura,
+        (Number(f.totalNeto) || 0).toString().replace(".", ","),
+        (Number(f.totalIva) || 0).toString().replace(".", ","),
+        (Number(f.totalGeneral) || 0).toString().replace(".", ","),
+        f.estadoPago,
+        f.fechaCobro,
+        (f.ordenPago || "").replace(/;/g, ",")
+      ]);
+
+      const contenido = [encabezados.join(";")]
+        .concat(filas.map(f => f.join(";")))
+        .join("\n");
+
+      const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "facturacion_siniestros.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function inicializar() {
+      // Info usuario
+      const currentUser = obtenerUsuarioActual();
+      const nombreUsuario =
+        (currentUser && (currentUser.nombre || currentUser.user || currentUser.username || currentUser.email)) ||
+        "(sin usuario)";
+      const infoUsuarioEl = document.getElementById("infoUsuario");
+      if (infoUsuarioEl) {
+        infoUsuarioEl.textContent =
+          "Usuario: " + nombreUsuario + (currentUser && currentUser.rol ? " | Rol: " + currentUser.rol : "");
+      }
+
+      // Menú lateral
+      const sidebar = document.getElementById("sidebar");
+      const content = document.getElementById("content");
+      const toggleBtn = document.getElementById("menuToggle");
+
+      function toggleSidebar() {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          sidebar.classList.toggle("open");
+        } else {
+          sidebar.classList.toggle("collapsed");
+          content.classList.toggle("collapsed");
+        }
+      }
+
+      toggleBtn.addEventListener("click", toggleSidebar);
+
+      // Checkbox header: seleccionar/deseleccionar todo lo visible
+      const chkAllVisible = document.getElementById("chk-all-visible");
+      if (chkAllVisible) {
+        chkAllVisible.addEventListener("change", () => {
+          const visibles = (ultimoFiltrado || []).map(f => String(f.nSiniestro));
+          if (chkAllVisible.checked) visibles.forEach(k => selectedSet.add(k));
+          else visibles.forEach(k => selectedSet.delete(k));
+          refrescar();
+        });
+      }
+
+      const facturasPorCaso = cargarFacturasDesdeStorage();
+      let listado = construirListadoFacturas();
+
+      function refrescar() {
+        listado = construirListadoFacturas();
+        const filtrado = aplicarFiltros(listado);
+        ultimoFiltrado = filtrado;
+        pintarTabla(filtrado, facturasPorCaso);
+        actualizarResumen(filtrado);
+        actualizarResumenSeleccion(filtrado);
+        actualizarHeaderSelectAll();
+      }
+
+      document.getElementById("btn-aplicar").addEventListener("click", refrescar);
+
+      document.getElementById("btn-limpiar").addEventListener("click", () => {
+        document.getElementById("f-buscar").value = "";
+        document.getElementById("f-estado").value = "";
+        document.getElementById("f-periodo").value = "";
+        document.getElementById("f-analista").value = "";
+        document.getElementById("f-compania").value = "";
+        refrescar();
+      });
+
+      document.getElementById("btn-exportar").addEventListener("click", () => {
+        const filtrado = aplicarFiltros(construirListadoFacturas());
+        exportarCSV(filtrado);
+      });
+
+      // Acciones masivas
+      document.getElementById("btn-aplicar-masivo").addEventListener("click", () => {
+        if (!selectedSet.size) {
+          alert("No hay filas seleccionadas.");
+          return;
+        }
+
+        const bulkOrden = document.getElementById("bulk-orden").value.trim();
+        const bulkFecha = document.getElementById("bulk-fecha").value || "";
+        const bulkEstado = document.getElementById("bulk-estado").value;
+
+        selectedSet.forEach(key => {
+          const factura = facturasPorCaso[key] || {};
+          if (bulkOrden) factura.ordenPago = bulkOrden;
+          if (bulkFecha) factura.fechaCobro = bulkFecha;
+          if (bulkEstado) factura.estadoPago = bulkEstado;
+          facturasPorCaso[key] = factura;
+        });
+
+        guardarFacturasEnStorage(facturasPorCaso);
+        refrescar();
+      });
+
+      document.getElementById("btn-limpiar-seleccion").addEventListener("click", () => {
+        selectedSet.clear();
+        document.getElementById("bulk-orden").value = "";
+        document.getElementById("bulk-fecha").value = "";
+        document.getElementById("bulk-estado").value = "";
+        refrescar();
+      });
+
+      // Primera carga
+      refrescar();
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializar);
+  </script>
+</body>
+</html>
