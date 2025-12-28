@@ -1812,7 +1812,6 @@
       if (!casoActual) return "";
       return `Asegurado: ${casoActual.asegurado||""}\nDNI: ${casoActual.dni||""}\nCompañía: ${casoActual.cia||""}\nN° siniestro: ${casoActual.nSiniestro||""}\nPóliza: ${casoActual.poliza||""}\nRamo: ${casoActual.ramo||""}\nCausa: ${casoActual.causa||""}\n\n`;
     }
-    document.getElementById("btn-informe").addEventListener("click", () => { if (!casoActual) { alert("Sin caso."); return; } abrirVentanaTexto("INFORME", armarContextoBasico() + "INFORME:\n\n..."); });
     document.getElementById("btn-informe-desiste").addEventListener("click", () => { if (!casoActual) { alert("Sin caso."); return; } abrirVentanaTexto("INFORME DESISTE", armarContextoBasico() + "INFORME DESISTE:\n\n..."); });
     document.getElementById("btn-preinforme").addEventListener("click", () => { if (!casoActual) { alert("Sin caso."); return; } abrirVentanaTexto("PREINFORME", armarContextoBasico() + "PREINFORME:\n\n..."); });
     document.getElementById("btn-nota-desiste").addEventListener("click", () => { if (!casoActual) { alert("Sin caso."); return; } abrirVentanaTexto("NOTA DESISTE", armarContextoBasico() + "NOTA DESISTE:\n\n..."); });
@@ -2305,4 +2304,5 @@ async function leerPDFFactura() {
 </script>
 </body>
 </html>
+
 
