@@ -5,190 +5,8 @@
   <title>PROYECTO SISTEMA - Facturación</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <link rel="stylesheet" href="layout-common.css">
   <style>
-    /* =========================
-       FACHADA (ESTILO INDEX)
-       ========================= */
-    :root{
-      --bg:#0e1a17;
-      --panel:#11211e;
-      --card:#11211e;
-      --text:#e6edf7;
-      --muted:#a9b7d1;
-      --line:rgba(255,255,255,.08);
-      --accent:#22c55e;
-      --danger:#ef4444;
-      --warn:#f59e0b;
-      --info:#06b6d4;
-      --shadow:0 12px 30px rgba(0,0,0,.35);
-      --radius:14px;
-      --topbarH:56px;
-      --sideW:270px;
-    }
-
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,.14), transparent 55%),
-        radial-gradient(900px 500px at 100% 10%, rgba(34,197,94,.08), transparent 60%),
-        var(--bg);
-      color: var(--text);
-    }
-
-    /* TOPBAR (reemplaza header viejo) */
-    header{
-      height: var(--topbarH);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 1200;
-      backdrop-filter: blur(6px);
-    }
-
-    .header-left{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width: 220px;
-    }
-
-    .menu-toggle{
-      appearance:none;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-size: 18px;
-      padding: 0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .menu-toggle:hover{ background: rgba(255,255,255,.08); }
-
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .logo img{
-      height: 28px;
-      width: auto;
-      border-radius: 8px;
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-    }
-    .titulo{
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: .2px;
-      line-height: 1.1;
-    }
-
-    .usuario{
-      font-size: 12px;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      padding: 6px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-      max-width: 55vw;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* ----- SIDEBAR (MISMO ID: sidebar) ----- */
-    .sidebar{
-      position: fixed;
-      top: var(--topbarH);
-      left: 0;
-      width: var(--sideW);
-      height: calc(100vh - var(--topbarH));
-      border-right: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 55%);
-      padding: 16px 12px;
-      transition: transform 0.25s ease;
-      z-index: 1100;
-      overflow-y: auto;
-    }
-
-    /* comportamiento desktop (botón ☰ colapsa) */
-    .sidebar.collapsed{
-      transform: translateX(calc(var(--sideW) * -1));
-    }
-
-    /* comportamiento mobile: por defecto oculto; "open" lo muestra */
-    @media (max-width: 768px){
-      .sidebar{
-        transform: translateX(calc(var(--sideW) * -1));
-      }
-      .sidebar.open{
-        transform: translateX(0);
-      }
-      .sidebar.collapsed{
-        transform: translateX(calc(var(--sideW) * -1));
-      }
-    }
-
-    /* Menú dentro del sidebar (reutiliza .menu-item existente) */
-    .menu-item{
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      text-align: left;
-      padding: 10px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      background: rgba(255,255,255,.03);
-      margin: 8px 4px;
-      text-transform: none;
-    }
-    .menu-item a{
-      text-decoration:none;
-      color: var(--text);
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight: 600;
-      letter-spacing: .2px;
-    }
-    .menu-item a::before{
-      content:"";
-      width:8px;height:8px;border-radius:50%;
-      background: rgba(255,255,255,.25);
-      flex: 0 0 auto;
-    }
-    .menu-item:hover{
-      background: rgba(255,255,255,.06);
-    }
-    .menu-item b{ color: var(--text); }
-
-    /* ----- CONTENIDO (MISMO ID: content) ----- */
-    main.content{
-      margin-left: var(--sideW);
-      padding: 18px 18px 28px;
-      transition: margin-left 0.25s ease;
-    }
-    main.content.collapsed{
-      margin-left: 0;
-    }
-
-    @media (max-width: 768px){
-      main.content{
-        margin-left: 0;
-      }
-    }
-
     h1{
       margin: 6px 0 6px;
       font-size: 20px;
@@ -249,23 +67,14 @@
       min-width: 180px;
       outline: none;
     }
-    .filtros input::placeholder{ color: rgba(230,237,247,.55); }
+        .filtros input::placeholder{ color: rgba(230,237,247,.55); }
 
     /* Botones */
-    .btn{
-      appearance:none;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      padding: 9px 12px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 12px;
+    .facturacion-btn{
       margin-top: 14px;
       margin-right: 6px;
-      transition: .15s ease;
+      padding: 9px 12px;
     }
-    .btn:hover{ background: rgba(255,255,255,.08); }
     #btn-aplicar{
       border-color: rgba(34,197,94,.35);
       background: rgba(34,197,94,.14);
@@ -547,9 +356,9 @@
         </label>
       </div>
 
-      <button class="btn" id="btn-aplicar">Aplicar filtros</button>
-      <button class="btn" id="btn-limpiar">Limpiar</button>
-      <button class="btn" id="btn-exportar">Exportar a CSV</button>
+      <button class="btn facturacion-btn" id="btn-aplicar">Aplicar filtros</button>
+      <button class="btn facturacion-btn" id="btn-limpiar">Limpiar</button>
+      <button class="btn facturacion-btn" id="btn-exportar">Exportar a CSV</button>
     </section>
 
     <section class="card" id="accionesMasivas">
@@ -580,8 +389,8 @@
         </label>
 
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn" id="btn-aplicar-masivo">Aplicar a seleccionados</button>
-          <button class="btn" id="btn-limpiar-seleccion">Limpiar selección</button>
+          <button class="btn facturacion-btn" id="btn-aplicar-masivo">Aplicar a seleccionados</button>
+          <button class="btn facturacion-btn" id="btn-limpiar-seleccion">Limpiar selección</button>
         </div>
       </div>
 
@@ -1144,4 +953,3 @@
   </script>
 </body>
 </html>
-
