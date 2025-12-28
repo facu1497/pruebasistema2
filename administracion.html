@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>PROYECTO SISTEMA – Administración</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <style>
+    /* =========================
+       FACHADA (ESTILO INDEX)
+       ========================= */
+    :root{
+      --bg:#0e1a17;
+      --panel:#11211e;
+      --card:#11211e;
+      --card2:#132623;
+      --text:#e6edf7;
+      --muted:#a9b7d1;
+      --line:rgba(255,255,255,.08);
+      --accent:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --info:#06b6d4;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:14px;
+
+      --topbarH:56px;
+      --sideW:270px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,.14), transparent 55%),
+        radial-gradient(900px 500px at 100% 10%, rgba(34,197,94,.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    /* =========================
+       TOPBAR (usa header existente)
+       ========================= */
+    header{
+      height: var(--topbarH);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1200;
+      backdrop-filter: blur(6px);
+    }
+    .header-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 240px;
+    }
+    .menu-toggle{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 18px;
+      padding: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .menu-toggle:hover{ background: rgba(255,255,255,.08); }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo img{
+      height:28px;
+      width:auto;
+      border-radius:8px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    .titulo{
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    /* info usuario (mismo id) */
+    #infoUsuario{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      max-width: 55vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* =========================
+       SIDEBAR (mismo ID: sidebar)
+       - visual igual a Index
+       - mantiene colapsar / open
+       ========================= */
+    .sidebar{
+      position: fixed;
+      top: var(--topbarH);
+      left: 0;
+      width: var(--sideW);
+      height: calc(100vh - var(--topbarH));
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 50%);
+      padding: 18px 14px;
+      transition: transform .25s ease;
+      z-index: 1100;
+      overflow-y: auto;
+    }
+    .sidebar.collapsed{ transform: translateX(calc(var(--sideW) * -1)); }
+
+    @media (max-width: 768px){
+      .sidebar{
+        transform: translateX(calc(var(--sideW) * -1));
+      }
+      .sidebar.open{
+        transform: translateX(0);
+      }
+      .sidebar.collapsed{
+        transform: translateX(calc(var(--sideW) * -1));
+      }
+    }
+
+    /* brand estilo index */
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 10px 18px;
+    }
+    .brand .logoBox{
+      width:36px; height:36px;
+      border-radius:10px;
+      background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.7));
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      flex: 0 0 auto;
+    }
+    .brand h1{
+      font-size:14px;
+      margin:0;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .brand span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    /* nav estilo index */
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:0 6px;
+    }
+    .nav a{
+      text-decoration:none;
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:var(--radius);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: transparent;
+      border:1px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    .nav a:hover{
+      border-color: var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .nav a.active{
+      background: rgba(34,197,94,.12);
+      border-color: rgba(34,197,94,.25);
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.22);
+      flex: 0 0 auto;
+    }
+    .nav a.active .dot{ background: var(--accent); }
+
+    .footer-card{
+      position:absolute;
+      bottom:14px;
+      left:14px;
+      right:14px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    /* =========================
+       CONTENT (mismo id: content)
+       ========================= */
+    main{
+      margin-left: var(--sideW);
+      padding: 18px 18px 28px;
+      transition: margin-left .25s ease;
+    }
+    main.collapsed{ margin-left: 0; }
+
+    @media (max-width: 768px){
+      main{ margin-left: 0; }
+    }
+
+    h1{
+      margin: 6px 0 2px;
+      font-size: 20px;
+      letter-spacing: .2px;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.35;
+    }
+
+    /* =========================
+       TABS
+       ========================= */
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .tab-btn{
+      padding:9px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:13px;
+      color: var(--text);
+      transition: .15s ease;
+    }
+    .tab-btn:hover{ background: rgba(255,255,255,.08); }
+    .tab-btn.active{
+      background: rgba(34,197,94,.14);
+      border-color: rgba(34,197,94,.35);
+      color: var(--text);
+      font-weight: 800;
+    }
+    .section{ display:none; }
+    .section.active{ display:block; }
+
+    /* =========================
+       CARDS / FORMS
+       ========================= */
+    .row{
+      display:grid;
+      grid-template-columns: 1.1fr 2fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 1000px){ .row{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size: 15px;
+      letter-spacing: .2px;
+    }
+    .card .muted{
+      color: var(--muted);
+      font-size:12px;
+      margin:2px 0 8px;
+      line-height: 1.35;
+    }
+
+    label{
+      font-size:12px;
+      color: var(--muted);
+      display:block;
+      margin:8px 0 6px;
+    }
+    input[type="text"], input[type="search"], select, textarea{
+      width:100%;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      font-size: 13px;
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline:none;
+    }
+    input::placeholder, textarea::placeholder{
+      color: rgba(230,237,247,.55);
+    }
+    .split{ display:flex; gap:10px; }
+    .split > div{ flex:1; }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      cursor:pointer;
+      font-size:13px;
+      transition: .15s ease;
+      text-decoration:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); }
+    .btn.primary{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.14);
+    }
+    .btn.primary:hover{ background: rgba(34,197,94,.18); }
+    .btn.danger{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.12);
+    }
+    .btn.danger:hover{ background: rgba(239,68,68,.16); }
+    .btn.flat{
+      background: rgba(255,255,255,.03);
+    }
+    .btn.small{
+      padding:6px 9px;
+      font-size:12px;
+      border-radius: 10px;
+    }
+
+    /* =========================
+       TABLE
+       ========================= */
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background: transparent;
+    }
+    th, td{
+      border-bottom:1px solid rgba(255,255,255,.06);
+      padding:10px;
+      font-size:12px;
+      text-align:left;
+      white-space:nowrap;
+      vertical-align:middle;
+    }
+    thead{
+      background: rgba(34,197,94,.15);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      backdrop-filter: blur(6px);
+    }
+    th{
+      cursor:pointer;
+      color: var(--text);
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    tbody tr:nth-child(even) td{ background: rgba(255,255,255,.015); }
+    tbody tr:hover td{ background: rgba(34,197,94,.08); }
+
+    .tag{
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      display:inline-block;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+    }
+    .tag.ok{
+      background: rgba(34,197,94,.22);
+      border-color: rgba(34,197,94,.35);
+    }
+    .tag.off{
+      background: rgba(239,68,68,.14);
+      border-color: rgba(239,68,68,.25);
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin:0 0 10px;
+    }
+    .right{
+      margin-left:auto;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .help{ font-size:12px; color: var(--muted); }
+    .pill{
+      font-size:11px;
+      padding:2px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      display:inline-block;
+    }
+
+    /* Ajustes mobile para footer-card fijo */
+    @media (max-width: 768px){
+      .footer-card{
+        position:relative;
+        left:auto; right:auto; bottom:auto;
+        margin-top:14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú lateral">☰</button>
+      <div class="logo">
+        <img src="logo_gibert.png" alt="Logo">
+        <div class="titulo">PROYECTO SISTEMA – Administración</div>
+      </div>
+    </div>
+    <div id="infoUsuario"></div>
+  </header>
+
+  <!-- SIDEBAR (igual a Index, MISMO id="sidebar") -->
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logoBox"></div>
+      <div>
+        <h1>PROYECTO SISTEMA</h1>
+        <span>Liquidador de siniestros</span>
+      </div>
+    </div>
+
+    <div class="nav">
+      <a href="index.html"><span class="dot"></span>Inicio</a>
+      <a href="lista.html"><span class="dot"></span>Listado de Casos</a>
+      <a href="tareas.html"><span class="dot"></span>Tareas</a>
+      <a href="reportes.html"><span class="dot"></span>Reportes</a>
+      <a href="facturacion.html"><span class="dot"></span>Facturación</a>
+      <a class="active" href="administracion.html"><span class="dot"></span>Administración</a>
+    </div>
+
+    <div class="footer-card">
+      <div id="infoUsuarioSidebar"></div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO (MISMO id="content") -->
+  <main id="content">
+    <h1>Administración del sistema</h1>
+    <div class="sub">Catálogos maestros para usar en casos, tareas y reportes.</div>
+
+    <!-- NAV TABS -->
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-target="companias">Compañías</button>
+      <button class="tab-btn" data-target="analistas">Analistas</button>
+      <button class="tab-btn" data-target="causas">Causas</button>
+      <button class="tab-btn" data-target="coberturas">Coberturas</button>
+      <button class="tab-btn" data-target="estados">Estados</button>
+    </div>
+
+    <!-- SECCIÓN: COMPAÑÍAS -->
+    <section id="companias" class="section active">
+      <div class="row">
+        <div class="card">
+          <h2>Alta de Compañía</h2>
+          <div class="muted">Creá nuevas compañías para asignar a casos.</div>
+          <label>Nombre de compañía</label>
+          <input type="text" id="compania_nombre" placeholder="Ej: Life Seguros" />
+
+          <div class="split">
+            <div>
+              <label>CUIT (opcional)</label>
+              <input type="text" id="compania_cuit" placeholder="Ej: 30-12345678-9" />
+            </div>
+            <div>
+              <label>Estado</label>
+              <select id="compania_activo">
+                <option value="1">Activa</option>
+                <option value="0">Inactiva</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Notas (opcional)</label>
+          <textarea id="compania_notas" rows="3" placeholder="Información útil para administración"></textarea>
+
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <button class="btn primary" id="btnAddCompania">Guardar compañía</button>
+            <span class="help">Evita duplicados: se valida por nombre.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Listado de Compañías</h2>
+          <div class="toolbar">
+            <input id="search_companias" type="search" placeholder="Buscar..." />
+            <div class="right">
+              <button class="btn flat small" data-export="master_companias">Exportar JSON</button>
+              <label class="btn flat small" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" data-import="master_companias" accept="application/json" style="display:none;">
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="tabla_companias" data-key="master_companias">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="nombre">Nombre</th>
+                  <th data-sort="cuit">CUIT</th>
+                  <th data-sort="activo">Activo</th>
+                  <th data-sort="updatedAt">Últ. modif.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody><!-- rows --></tbody>
+            </table>
+          </div>
+          <div class="muted">Doble click en una celda editable para modificar.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: ANALISTAS -->
+    <section id="analistas" class="section">
+      <div class="row">
+        <div class="card">
+          <h2>Alta de Analista</h2>
+          <label>Nombre y apellido</label>
+          <input type="text" id="analista_nombre" placeholder="Ej: Juan Pérez" />
+          <div class="split">
+            <div>
+              <label>Email (opcional)</label>
+              <input type="text" id="analista_email" placeholder="Ej: juan@estudio.com" />
+            </div>
+            <div>
+              <label>Teléfono (opcional)</label>
+              <input type="text" id="analista_tel" placeholder="Ej: 11-1234-5678" />
+            </div>
+          </div>
+          <label>Estado</label>
+          <select id="analista_activo">
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+          </select>
+          <div style="margin-top:10px;">
+            <button class="btn primary" id="btnAddAnalista">Guardar analista</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Listado de Analistas</h2>
+          <div class="toolbar">
+            <input id="search_analistas" type="search" placeholder="Buscar..." />
+            <div class="right">
+              <button class="btn flat small" data-export="master_analistas">Exportar JSON</button>
+              <label class="btn flat small" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" data-import="master_analistas" accept="application/json" style="display:none;">
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="tabla_analistas" data-key="master_analistas">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="nombre">Nombre</th>
+                  <th data-sort="email">Email</th>
+                  <th data-sort="tel">Teléfono</th>
+                  <th data-sort="activo">Activo</th>
+                  <th data-sort="updatedAt">Últ. modif.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="muted">Edición inline por doble click.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: CAUSAS -->
+    <section id="causas" class="section">
+      <div class="row">
+        <div class="card">
+          <h2>Alta de Causa</h2>
+          <label>Nombre de la causa</label>
+          <input type="text" id="causa_nombre" placeholder="Ej: Variación de tensión" />
+          <div class="split">
+            <div>
+              <label>Estado</label>
+              <select id="causa_activo">
+                <option value="1">Activa</option>
+                <option value="0">Inactiva</option>
+              </select>
+            </div>
+            <div>
+              <label>Tipo (opcional)</label>
+              <input type="text" id="causa_tipo" placeholder="Ej: Eléctrica, Hidráulica..." />
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn primary" id="btnAddCausa">Guardar causa</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Listado de Causas</h2>
+          <div class="toolbar">
+            <input id="search_causas" type="search" placeholder="Buscar..." />
+            <div class="right">
+              <button class="btn flat small" data-export="master_causas">Exportar JSON</button>
+              <label class="btn flat small" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" data-import="master_causas" accept="application/json" style="display:none;">
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="tabla_causas" data-key="master_causas">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="nombre">Nombre</th>
+                  <th data-sort="tipo">Tipo</th>
+                  <th data-sort="activo">Activo</th>
+                  <th data-sort="updatedAt">Últ. modif.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: COBERTURAS -->
+    <section id="coberturas" class="section">
+      <div class="row">
+        <div class="card">
+          <h2>Alta de Cobertura</h2>
+          <label>Nombre de la cobertura</label>
+          <input type="text" id="cobertura_nombre" placeholder="Ej: Daño por líquidos" />
+          <div class="split">
+            <div>
+              <label>Ramo (opcional)</label>
+              <input type="text" id="cobertura_ramo" placeholder="Ej: Hogar, Comercio..." />
+            </div>
+            <div>
+              <label>Estado</label>
+              <select id="cobertura_activo">
+                <option value="1">Activa</option>
+                <option value="0">Inactiva</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn primary" id="btnAddCobertura">Guardar cobertura</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Listado de Coberturas</h2>
+          <div class="toolbar">
+            <input id="search_coberturas" type="search" placeholder="Buscar..." />
+            <div class="right">
+              <button class="btn flat small" data-export="master_coberturas">Exportar JSON</button>
+              <label class="btn flat small" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" data-import="master_coberturas" accept="application/json" style="display:none;">
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="tabla_coberturas" data-key="master_coberturas">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="nombre">Nombre</th>
+                  <th data-sort="ramo">Ramo</th>
+                  <th data-sort="activo">Activo</th>
+                  <th data-sort="updatedAt">Últ. modif.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: ESTADOS -->
+    <section id="estados" class="section">
+      <div class="row">
+        <div class="card">
+          <h2>Alta de Estado</h2>
+          <div class="muted">
+            Podés usar tu listado actual (CONTACTAR, ENTREVISTAR, DOC PENDIENTE, PREINFORMAR, PREINFORME ENVIADO, ANALIZAR, NOTA PENDIENTE, INFORMAR, CERRADO, DADO DE BAJA, DESISTE PENDIENTE).
+            Recordá que “INFORME ENVIADO” lo unificamos con “CERRADO”.
+          </div>
+          <label>Nombre del estado</label>
+          <input type="text" id="estado_nombre" placeholder="Ej: CONTACTAR" />
+          <div class="split">
+            <div>
+              <label>Color (opcional)</label>
+              <input type="text" id="estado_color" placeholder="Ej: #ff0000 o 'rojo'" />
+            </div>
+            <div>
+              <label>Activo</label>
+              <select id="estado_activo">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn primary" id="btnAddEstado">Guardar estado</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Listado de Estados</h2>
+          <div class="toolbar">
+            <input id="search_estados" type="search" placeholder="Buscar..." />
+            <div class="right">
+              <button class="btn flat small" data-export="master_estados">Exportar JSON</button>
+              <label class="btn flat small" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" data-import="master_estados" accept="application/json" style="display:none;">
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="tabla_estados" data-key="master_estados">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="nombre">Nombre</th>
+                  <th data-sort="color">Color</th>
+                  <th data-sort="activo">Activo</th>
+                  <th data-sort="updatedAt">Últ. modif.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="muted">Estos estados son los que se verán en “lista” y “tareas”.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====== JS ORIGINAL (SIN TOCAR) ====== -->
+  <script>
+    /* ========= UTILIDADES STORAGE ========= */
+    const KEYS = {
+      companias: "master_companias",
+      analistas: "master_analistas",
+      causas: "master_causas",
+      coberturas: "master_coberturas",
+      estados: "master_estados",
+    };
+
+    const nowISO = () => new Date().toISOString();
+
+    function getList(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.warn("getList parse error", key, e);
+        return [];
+      }
+    }
+    function setList(key, arr) {
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+    function nextIdFor(key) {
+      const metaKey = key + "_nextId";
+      let n = parseInt(localStorage.getItem(metaKey) || "1", 10);
+      localStorage.setItem(metaKey, String(n + 1));
+      return n;
+    }
+    function normalizeName(s) {
+      return (s || "").toString().trim().toLowerCase().replace(/\s+/g, " ");
+    }
+    function existsByName(key, name, excludeId = null) {
+      const norm = normalizeName(name);
+      return getList(key).some(it => normalizeName(it.nombre) === norm && (excludeId == null || it.id !== excludeId));
+    }
+
+    /* ========= SEED INICIAL ========= */
+    function seedIfEmpty() {
+      if (getList(KEYS.companias).length === 0) {
+        setList(KEYS.companias, [
+          { id: nextIdFor(KEYS.companias), nombre: "Life Seguros", cuit: "", activo: 1, createdAt: nowISO(), updatedAt: nowISO(), notas:"" },
+          { id: nextIdFor(KEYS.companias), nombre: "Segurcoop",   cuit: "", activo: 1, createdAt: nowISO(), updatedAt: nowISO(), notas:"" },
+          { id: nextIdFor(KEYS.companias), nombre: "Nativa Seguros", cuit: "", activo: 1, createdAt: nowISO(), updatedAt: nowISO(), notas:"" },
+        ]);
+      }
+      if (getList(KEYS.analistas).length === 0) {
+        setList(KEYS.analistas, [
+          { id: nextIdFor(KEYS.analistas), nombre:"Analista 1", email:"", tel:"", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.analistas), nombre:"Analista 2", email:"", tel:"", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+        ]);
+      }
+      if (getList(KEYS.causas).length === 0) {
+        setList(KEYS.causas, [
+          { id: nextIdFor(KEYS.causas), nombre:"Variación de tensión", tipo:"Eléctrica", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.causas), nombre:"Robo", tipo:"Delictiva", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+        ]);
+      }
+      if (getList(KEYS.coberturas).length === 0) {
+        setList(KEYS.coberturas, [
+          { id: nextIdFor(KEYS.coberturas), nombre:"Daño por líquidos", ramo:"Hogar", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.coberturas), nombre:"Daño eléctrico", ramo:"Hogar", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+        ]);
+      }
+      if (getList(KEYS.estados).length === 0) {
+        setList(KEYS.estados, [
+          { id: nextIdFor(KEYS.estados), nombre:"CONTACTAR", color:"#d70000", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"ENTREVISTAR", color:"#e67e22", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"DOC PENDIENTE", color:"#9b59b6", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"PREINFORMAR", color:"#2980b9", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"ANALIZAR", color:"#16a085", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"NOTA PENDIENTE", color:"#8e44ad", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"INFORMAR", color:"#2c3e50", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"CERRADO", color:"#1e7e34", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"DADO DE BAJA", color:"#7f8c8d", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+          { id: nextIdFor(KEYS.estados), nombre:"DESISTE PENDIENTE", color:"#b03a2e", activo:1, createdAt: nowISO(), updatedAt: nowISO() },
+        ]);
+      }
+    }
+
+    /* ========= RENDER TABLAS GENERIC ========= */
+    const state = {
+      sort: { key: null, dir: 1 },
+      filters: {
+        [KEYS.companias]: "",
+        [KEYS.analistas]: "",
+        [KEYS.causas]: "",
+        [KEYS.coberturas]: "",
+        [KEYS.estados]: "",
+      }
+    };
+
+    function fmtDate(s) {
+      try { return new Date(s).toLocaleString(); } catch { return s || ""; }
+    }
+    function renderTagActivo(v) { return v ? '<span class="tag ok">Sí</span>' : '<span class="tag off">No</span>'; }
+
+    function renderTable(key, tableId, columns) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      if (!tbody) return;
+
+      let rows = getList(key);
+      const q = (state.filters[key] || "").trim().toLowerCase();
+      if (q) {
+        rows = rows.filter(r => Object.values(r).some(v => (v+"").toLowerCase().includes(q)));
+      }
+
+      const { key: sKey, dir } = state.sort;
+      if (sKey) {
+        rows.sort((a,b) => {
+          const av = (a[sKey] ?? "").toString().toLowerCase();
+          const bv = (b[sKey] ?? "").toString().toLowerCase();
+          if (av < bv) return -1*dir;
+          if (av > bv) return 1*dir;
+          return 0;
+        });
+      } else {
+        rows.sort((a,b) => a.id - b.id);
+      }
+
+      tbody.innerHTML = rows.map(r => {
+        return `<tr data-id="${r.id}">
+          ${columns.map(col => renderCell(r, col)).join("")}
+          <td>
+            <button class="btn small" data-edit="1">Editar</button>
+            <button class="btn danger small" data-del="1">Borrar</button>
+          </td>
+        </tr>`;
+      }).join("");
+
+      tbody.querySelectorAll("button[data-del]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const tr = e.target.closest("tr");
+          const id = Number(tr.dataset.id);
+          const list = getList(key).filter(x => x.id !== id);
+          setList(key, list);
+          renderAll();
+        });
+      });
+      tbody.querySelectorAll("button[data-edit]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          enableInlineEdit(e.target.closest("tr"), key, columns);
+        });
+      });
+
+      tbody.querySelectorAll("td[data-editable='1']").forEach(td => {
+        td.addEventListener("dblclick", () => startCellEdit(td, key));
+      });
+    }
+
+    function renderCell(row, col) {
+      const val = row[col.field] ?? "";
+      let display = val;
+      if (col.field === "activo") display = renderTagActivo(Number(val));
+      if (col.field === "updatedAt" || col.field === "createdAt") display = fmtDate(val);
+      if (col.field === "color" && val) display = `<span class="pill" style="border-color:#999; background:${val}; color:#000">${val}</span>`;
+
+      const editable = col.editable ? ' data-editable="1"' : "";
+      return `<td${editable} data-field="${col.field}">${display}</td>`;
+    }
+
+    function startCellEdit(td, key) {
+      const field = td.dataset.field;
+      const tr = td.closest("tr");
+      const id = Number(tr.dataset.id);
+      const list = getList(key);
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      const oldVal = item[field] ?? "";
+      td.innerHTML = `<input type="text" value="${String(oldVal).replace(/"/g,'&quot;')}">`;
+      const input = td.querySelector("input");
+      input.focus();
+      input.addEventListener("blur", () => finishCellEdit(td, key, field, id, input.value));
+      input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") input.blur();
+        if (ev.key === "Escape") { td.textContent = oldVal; }
+      });
+    }
+
+    function finishCellEdit(td, key, field, id, newVal) {
+      const list = getList(key);
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      if (field === "nombre") {
+        if (!newVal.trim()) { alert("El nombre no puede estar vacío."); return renderAll(); }
+        if (existsByName(key, newVal, id)) { alert("Ya existe otro con ese nombre."); return renderAll(); }
+      }
+      if (field === "activo") {
+        newVal = String(newVal).trim();
+        if (newVal === "Sí" || newVal.toLowerCase() === "si") newVal = 1;
+        if (newVal === "No" ) newVal = 0;
+        newVal = Number(newVal) ? 1 : 0;
+      }
+
+      item[field] = newVal;
+      item.updatedAt = nowISO();
+      setList(key, list);
+      renderAll();
+    }
+
+    function enableInlineEdit(tr, key, columns) {
+      columns.forEach(col => {
+        if (!col.editable) return;
+        const td = tr.querySelector(`td[data-field="${col.field}"]`);
+        if (!td) return;
+        startCellEdit(td, key);
+      });
+    }
+
+    function bindSorting(tableId, key) {
+      const thead = document.querySelector(`#${tableId} thead`);
+      thead.querySelectorAll("th[data-sort]").forEach(th => {
+        th.addEventListener("click", () => {
+          const sortKey = th.dataset.sort;
+          if (state.sort.key === sortKey) {
+            state.sort.dir *= -1;
+          } else {
+            state.sort.key = sortKey;
+            state.sort.dir = 1;
+          }
+          renderAll();
+        });
+      });
+    }
+
+    function renderAll() {
+      renderTable(KEYS.companias, "tabla_companias", [
+        { field:"id" },
+        { field:"nombre", editable:true },
+        { field:"cuit", editable:true },
+        { field:"activo", editable:true },
+        { field:"updatedAt" },
+      ]);
+      renderTable(KEYS.analistas, "tabla_analistas", [
+        { field:"id" },
+        { field:"nombre", editable:true },
+        { field:"email", editable:true },
+        { field:"tel", editable:true },
+        { field:"activo", editable:true },
+        { field:"updatedAt" },
+      ]);
+      renderTable(KEYS.causas, "tabla_causas", [
+        { field:"id" },
+        { field:"nombre", editable:true },
+        { field:"tipo", editable:true },
+        { field:"activo", editable:true },
+        { field:"updatedAt" },
+      ]);
+      renderTable(KEYS.coberturas, "tabla_coberturas", [
+        { field:"id" },
+        { field:"nombre", editable:true },
+        { field:"ramo", editable:true },
+        { field:"activo", editable:true },
+        { field:"updatedAt" },
+      ]);
+      renderTable(KEYS.estados, "tabla_estados", [
+        { field:"id" },
+        { field:"nombre", editable:true },
+        { field:"color", editable:true },
+        { field:"activo", editable:true },
+        { field:"updatedAt" },
+      ]);
+    }
+
+    function addBaseHandlers() {
+      document.getElementById("btnAddCompania").addEventListener("click", () => {
+        const nombre = document.getElementById("compania_nombre").value.trim();
+        const cuit = (document.getElementById("compania_cuit").value || "").trim();
+        const activo = Number(document.getElementById("compania_activo").value);
+        const notas = (document.getElementById("compania_notas").value || "").trim();
+        if (!nombre) return alert("Ingresá un nombre");
+        if (existsByName(KEYS.companias, nombre)) return alert("Ya existe una compañía con ese nombre.");
+
+        const list = getList(KEYS.companias);
+        list.push({ id: nextIdFor(KEYS.companias), nombre, cuit, activo, notas, createdAt: nowISO(), updatedAt: nowISO() });
+        setList(KEYS.companias, list);
+        document.getElementById("compania_nombre").value = "";
+        document.getElementById("compania_cuit").value = "";
+        document.getElementById("compania_notas").value = "";
+        renderAll();
+      });
+
+      document.getElementById("btnAddAnalista").addEventListener("click", () => {
+        const nombre = document.getElementById("analista_nombre").value.trim();
+        const email  = (document.getElementById("analista_email").value || "").trim();
+        const tel    = (document.getElementById("analista_tel").value || "").trim();
+        const activo = Number(document.getElementById("analista_activo").value);
+        if (!nombre) return alert("Ingresá un nombre");
+        if (existsByName(KEYS.analistas, nombre)) return alert("Ya existe un analista con ese nombre.");
+
+        const list = getList(KEYS.analistas);
+        list.push({ id: nextIdFor(KEYS.analistas), nombre, email, tel, activo, createdAt: nowISO(), updatedAt: nowISO() });
+        setList(KEYS.analistas, list);
+        document.getElementById("analista_nombre").value = "";
+        document.getElementById("analista_email").value = "";
+        document.getElementById("analista_tel").value = "";
+        renderAll();
+      });
+
+      document.getElementById("btnAddCausa").addEventListener("click", () => {
+        const nombre = document.getElementById("causa_nombre").value.trim();
+        const tipo   = (document.getElementById("causa_tipo").value || "").trim();
+        const activo = Number(document.getElementById("causa_activo").value);
+        if (!nombre) return alert("Ingresá un nombre");
+        if (existsByName(KEYS.causas, nombre)) return alert("Ya existe una causa con ese nombre.");
+
+        const list = getList(KEYS.causas);
+        list.push({ id: nextIdFor(KEYS.causas), nombre, tipo, activo, createdAt: nowISO(), updatedAt: nowISO() });
+        setList(KEYS.causas, list);
+        document.getElementById("causa_nombre").value = "";
+        document.getElementById("causa_tipo").value = "";
+        renderAll();
+      });
+
+      document.getElementById("btnAddCobertura").addEventListener("click", () => {
+        const nombre = document.getElementById("cobertura_nombre").value.trim();
+        const ramo   = (document.getElementById("cobertura_ramo").value || "").trim();
+        const activo = Number(document.getElementById("cobertura_activo").value);
+        if (!nombre) return alert("Ingresá un nombre");
+        if (existsByName(KEYS.coberturas, nombre)) return alert("Ya existe una cobertura con ese nombre.");
+
+        const list = getList(KEYS.coberturas);
+        list.push({ id: nextIdFor(KEYS.coberturas), nombre, ramo, activo, createdAt: nowISO(), updatedAt: nowISO() });
+        setList(KEYS.coberturas, list);
+        document.getElementById("cobertura_nombre").value = "";
+        document.getElementById("cobertura_ramo").value = "";
+        renderAll();
+      });
+
+      document.getElementById("btnAddEstado").addEventListener("click", () => {
+        const nombre = document.getElementById("estado_nombre").value.trim();
+        const color  = (document.getElementById("estado_color").value || "").trim();
+        const activo = Number(document.getElementById("estado_activo").value);
+        if (!nombre) return alert("Ingresá un nombre");
+        if (existsByName(KEYS.estados, nombre)) return alert("Ya existe un estado con ese nombre.");
+
+        const list = getList(KEYS.estados);
+        list.push({ id: nextIdFor(KEYS.estados), nombre, color, activo, createdAt: nowISO(), updatedAt: nowISO() });
+        setList(KEYS.estados, list);
+        document.getElementById("estado_nombre").value = "";
+        document.getElementById("estado_color").value = "";
+        renderAll();
+      });
+    }
+
+    function bindSearches() {
+      const map = [
+        { input: "search_companias", key: KEYS.companias },
+        { input: "search_analistas", key: KEYS.analistas },
+        { input: "search_causas", key: KEYS.causas },
+        { input: "search_coberturas", key: KEYS.coberturas },
+        { input: "search_estados", key: KEYS.estados },
+      ];
+      map.forEach(({input, key}) => {
+        const el = document.getElementById(input);
+        if (!el) return;
+        el.addEventListener("input", () => {
+          state.filters[key] = el.value || "";
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll("[data-export]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.getAttribute("data-export");
+          const data = getList(key);
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = key + ".json";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+      });
+
+      document.querySelectorAll("input[type='file'][data-import]").forEach(inp => {
+        inp.addEventListener("change", async () => {
+          const key = inp.getAttribute("data-import");
+          const file = inp.files && inp.files[0];
+          if (!file) return;
+          try {
+            const text = await file.text();
+            const arr = JSON.parse(text);
+            if (!Array.isArray(arr)) throw new Error("El JSON debe ser un array");
+            const sanitized = arr.map(x => ({
+              id: Number(x.id) || nextIdFor(key),
+              nombre: (x.nombre ?? "").toString(),
+              activo: Number(x.activo) ? 1 : 0,
+              ...x,
+              updatedAt: nowISO(),
+              createdAt: x.createdAt || nowISO(),
+            }));
+            setList(key, sanitized);
+            renderAll();
+            alert("Importado correctamente.");
+            inp.value = "";
+          } catch (e) {
+            alert("Error al importar: " + e.message);
+          }
+        });
+      });
+    }
+
+    function bindSorters() {
+      bindSorting("tabla_companias", KEYS.companias);
+      bindSorting("tabla_analistas", KEYS.analistas);
+      bindSorting("tabla_causas", KEYS.causas);
+      bindSorting("tabla_coberturas", KEYS.coberturas);
+      bindSorting("tabla_estados", KEYS.estados);
+    }
+
+    function setupTabs() {
+      const tabs = document.querySelectorAll(".tab-btn");
+      const sections = document.querySelectorAll(".section");
+      tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          tabs.forEach(x => x.classList.remove("active"));
+          btn.classList.add("active");
+          sections.forEach(sec => sec.classList.remove("active"));
+          document.getElementById(btn.dataset.target).classList.add("active");
+        });
+      });
+    }
+
+    function setupLayout() {
+      const sidebar = document.getElementById("sidebar");
+      const content = document.getElementById("content");
+      const toggleBtn = document.getElementById("menuToggle");
+
+      toggleBtn.addEventListener("click", () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) sidebar.classList.toggle("open");
+        else {
+          sidebar.classList.toggle("collapsed");
+          content.classList.toggle("collapsed");
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 768) {
+          content.classList.remove("collapsed");
+          sidebar.classList.remove("collapsed");
+        } else {
+          sidebar.classList.remove("open");
+        }
+      });
+
+      const info = document.getElementById("infoUsuario");
+      try {
+        const raw = localStorage.getItem("currentUser");
+        if (raw) {
+          const u = JSON.parse(raw);
+          const nombre = u.nombre || u.user || u.username || u.email || "(sin usuario)";
+          info.textContent = "Usuario: " + nombre + (u.rol ? " | Rol: " + u.rol : "");
+
+          const infoSidebar = document.getElementById("infoUsuarioSidebar");
+          if (infoSidebar) infoSidebar.textContent = info.textContent;
+        } else {
+          info.textContent = "Usuario: (sin usuario)";
+          const infoSidebar = document.getElementById("infoUsuarioSidebar");
+          if (infoSidebar) infoSidebar.textContent = info.textContent;
+        }
+      } catch {
+        info.textContent = "Usuario: (sin usuario)";
+        const infoSidebar = document.getElementById("infoUsuarioSidebar");
+        if (infoSidebar) infoSidebar.textContent = info.textContent;
+      }
+    }
+
+    seedIfEmpty();
+    setupTabs();
+    setupLayout();
+    bindSearches();
+    bindSorters();
+    addBaseHandlers();
+    renderAll();
+  </script>
+</body>
+</html>
+
