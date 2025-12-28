@@ -190,86 +190,6 @@
         display: none;
       }
     }
-/* ===== SIDEBAR igual a INDEX ===== */
-.sidebar{
-  border-right:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 50%);
-  padding:18px 14px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 10px 18px;
-}
-.brand h1{
-  font-size:14px;
-  margin:0;
-  line-height:1.2;
-  letter-spacing:.2px;
-}
-.brand span{
-  display:block;
-  font-size:12px;
-  color:var(--muted);
-  margin-top:2px;
-}
-
-/* logo “cuadradito verde” como Index */
-.sidebar .logo{
-  width:36px; height:36px;
-  border-radius:10px;
-  background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.7));
-  box-shadow: 0 10px 22px rgba(0,0,0,.35);
-}
-
-/* navegación con dots */
-.sidebar .nav{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:0 6px;
-}
-.sidebar .nav a{
-  text-decoration:none;
-  color:var(--text);
-  padding:10px 10px;
-  border-radius:var(--radius);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background: transparent;
-  border:1px solid transparent;
-}
-.sidebar .nav a:hover{
-  border-color: var(--line);
-  background: rgba(255,255,255,.03);
-}
-.sidebar .nav a.active{
-  background: rgba(34,197,94,.12);
-  border-color: rgba(34,197,94,.25);
-}
-.sidebar .dot{
-  width:8px;height:8px;border-radius:999px;
-  background: rgba(255,255,255,.22);
-}
-.sidebar .nav a.active .dot{ background: var(--accent); }
-
-/* footer-card como Index */
-.sidebar .footer-card{
-  position:absolute;
-  bottom:14px;
-  left:14px;
-  right:14px;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(255,255,255,.03);
-  color: var(--muted);
-  font-size:12px;
-}
-
   </style>
 </head>
 
@@ -312,7 +232,7 @@
 
 
   <!-- CONTENIDO (mismo id: content) -->
-  <main class="content" id="content">
+<main class="content main" id="content">
     <h1>Facturación</h1>
     <div class="subtitulo">
       Control interno de facturas emitidas por caso. Podés ver qué está facturado, qué está pendiente de cobro
