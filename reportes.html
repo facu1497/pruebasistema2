@@ -55,7 +55,7 @@
       gap:10px;
       padding:10px 10px 18px;
     }
-    .logo{
+    .sidebar .logo{
       width:36px; height:36px;
       border-radius:10px;
       background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.7));
@@ -230,6 +230,151 @@
       flex-wrap:wrap;
       margin-top:10px;
     }
+
+    .gestion-analistas{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .gestion-card{
+      flex: 1 1 240px;
+      min-width: 220px;
+      border:1px solid rgba(34,197,94,.35);
+      border-radius: var(--radius);
+      background: linear-gradient(140deg, rgba(34,197,94,.14), rgba(6,182,212,.10));
+      padding:16px 16px 14px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transition:.2s ease;
+    }
+    .gestion-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(180px 180px at 90% 0%, rgba(255,255,255,.12), transparent 60%);
+      pointer-events:none;
+      opacity:.6;
+    }
+    .gestion-card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow), 0 10px 26px rgba(34,197,94,.18);
+    }
+    .ga-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .ga-chip{
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+    }
+    .gestion-card .ga-title{
+      font-weight:700;
+      font-size:14px;
+      color: var(--text);
+      letter-spacing:.2px;
+    }
+    .gestion-card .ga-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px 0;
+      border-bottom:1px dashed rgba(255,255,255,.1);
+      font-weight:600;
+      letter-spacing:.2px;
+      gap:10px;
+    }
+    .gestion-card .ga-row:last-child{ border-bottom:none; }
+    .ga-label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+    }
+    .ga-dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background: currentColor;
+      box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+    }
+    .gestion-card .ga-num{
+      font-size:16px;
+      font-weight:800;
+      color: var(--text);
+    }
+    .ga-sin-contactar{ color: var(--danger); }
+    .ga-pendientes{ color: var(--text); }
+    .ga-cerrados{ color: var(--accent); }
+    .ga-empty{
+      width:100%;
+      padding:12px;
+      border:1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align:center;
+      background: rgba(255,255,255,.02);
+    }
+
+    .gestion-analistas{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .gestion-card{
+      flex: 1 1 240px;
+      min-width: 220px;
+      border:1px solid rgba(34,197,94,.35);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(34,197,94,.10), rgba(34,197,94,.06));
+      padding:14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .gestion-card .ga-title{
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:12px;
+      color: var(--text);
+    }
+    .gestion-card .ga-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:6px 0;
+      border-bottom:1px dashed rgba(255,255,255,.1);
+      font-weight:600;
+      letter-spacing:.2px;
+      gap:10px;
+    }
+    .gestion-card .ga-row:last-child{ border-bottom:none; }
+    .gestion-card .ga-row span:first-child{ font-size:12px; }
+    .gestion-card .ga-num{
+      font-size:16px;
+      font-weight:800;
+      color: var(--text);
+    }
+    .ga-sin-contactar{ color: var(--danger); }
+    .ga-pendientes{ color: var(--text); }
+    .ga-cerrados{ color: var(--accent); }
+    .ga-empty{
+      width:100%;
+      padding:12px;
+      border:1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align:center;
+      background: rgba(255,255,255,.02);
+    }
     .metric{
       flex: 1 1 190px;
       min-width: 170px;
@@ -379,6 +524,16 @@
       </div>
 
       <div class="grid">
+
+        <!-- GESTIÓN POR ANALISTA -->
+        <section class="card">
+          <h3>Estado de gestión por analista</h3>
+          <p>Cuenta de casos por estado (según listado) para cada analista en el scope actual.</p>
+
+          <div id="gestionAnalistas" class="gestion-analistas">
+            <div class="ga-empty">Sin datos.</div>
+          </div>
+        </section>
 
         <!-- FILTROS -->
         <section class="card">
@@ -721,6 +876,7 @@
     let lastPorAnalista = [];
     let lastPorCompania = [];
     let lastTareasPendAnalista = [];
+    let lastGestionAnalistas = [];
 
     function recalcularReportes() {
       aplicarFiltrosAScope();
@@ -805,10 +961,13 @@
       lastTareasPendAnalista = Object.keys(pendientesPorAnalista).map(k => ({ analista: k, pendientes: pendientesPorAnalista[k] }))
         .sort((a,b)=> b.pendientes - a.pendientes);
 
+      lastGestionAnalistas = calcularGestionPorAnalista(lastDataset);
+
       renderTablaSimple("tablaPorEstado", lastPorEstado, ["estado","cantidad"]);
       renderTablaSimple("tablaPorAnalista", lastPorAnalista, ["analista","cantidad"]);
       renderTablaSimple("tablaPorCompania", lastPorCompania, ["compania","cantidad"]);
       renderTablaSimple("tablaTareasPendientesAnalista", lastTareasPendAnalista, ["analista","pendientes"]);
+      renderGestionAnalistas(lastGestionAnalistas);
     }
 
     function renderTablaSimple(tbodyId, rows, cols) {
@@ -828,6 +987,62 @@
           return `<td class="${cls}">${String(val)}</td>`;
         }).join("");
         tb.appendChild(tr);
+      });
+    }
+
+    function clasificarEstadoGestion(estado) {
+      const up = upper(estado);
+      if (up === "CERRADO") return "cerrados";
+      if (up === "CONTACTAR" || up === "SIN CONTACTAR") return "sinContactar";
+      return "pendientes";
+    }
+
+    function calcularGestionPorAnalista(dataset) {
+      const mapa = {};
+      dataset.forEach(row => {
+        const analista = row.analista || "Sin asignar";
+        if (!mapa[analista]) {
+          mapa[analista] = { analista, sinContactar: 0, pendientes: 0, cerrados: 0 };
+        }
+        const grupo = clasificarEstadoGestion(row.estado);
+        mapa[analista][grupo] += 1;
+      });
+
+      return Object.values(mapa).sort((a, b) => a.analista.localeCompare(b.analista));
+    }
+
+    function renderGestionAnalistas(rows) {
+      const wrap = document.getElementById("gestionAnalistas");
+      wrap.innerHTML = "";
+
+      if (!rows || rows.length === 0) {
+        wrap.innerHTML = '<div class="ga-empty">Sin datos.</div>';
+        return;
+      }
+
+      rows.forEach(r => {
+        const card = document.createElement("div");
+        card.className = "gestion-card";
+        const total = r.sinContactar + r.pendientes + r.cerrados;
+        card.innerHTML = `
+          <div class="ga-header">
+            <div class="ga-title">${r.analista}</div>
+            <div class="ga-chip">${total} caso${total === 1 ? "" : "s"}</div>
+          </div>
+          <div class="ga-row ga-sin-contactar">
+            <span class="ga-label"><span class="ga-dot"></span>SIN CONTACTAR</span>
+            <span class="ga-num">${r.sinContactar}</span>
+          </div>
+          <div class="ga-row ga-pendientes">
+            <span class="ga-label"><span class="ga-dot"></span>PENDIENTES</span>
+            <span class="ga-num">${r.pendientes}</span>
+          </div>
+          <div class="ga-row ga-cerrados">
+            <span class="ga-label"><span class="ga-dot"></span>CERRADOS</span>
+            <span class="ga-num">${r.cerrados}</span>
+          </div>
+        `;
+        wrap.appendChild(card);
       });
     }
 
